@@ -45,6 +45,15 @@ const ambientOrbits = document.querySelector('.ambient-orbits');
 const hoverTargets = 'a, button, .card, .transmission, .member';
 const typewriterEl = document.getElementById('typewriter');
 const rootElement = document.documentElement;
+const galleryGrid = document.getElementById('galleryGrid');
+const lightbox = document.getElementById('lightbox');
+const lightboxImage = document.getElementById('lightboxImage');
+const lightboxTitle = document.getElementById('lightboxTitle');
+const lightboxMeta = document.getElementById('lightboxMeta');
+const lightboxClose = document.getElementById('lightboxClose');
+const lightboxPrev = document.getElementById('lightboxPrev');
+const lightboxNext = document.getElementById('lightboxNext');
+const galleryTooltip = document.getElementById('galleryTooltip');
 
 const idleDelay = 1500;
 const idleOrbits = [
@@ -56,8 +65,139 @@ const idleOrbits = [
   { side: 'right', size: 88, top: 78, duration: 17, delay: 0.2 }
 ];
 
+const galleryItems = [
+  {
+    src: 'assets/nano1.png',
+    short: 'Première lumière',
+    titre: 'Première lumière',
+    lieu: 'Surface nord, Zone A-7',
+    date: '14.03.2079',
+    astronaute: 'Cmdt. Sarah Chen'
+  },
+  {
+    src: 'assets/nano2.png',
+    short: 'Depuis l’orbite basse',
+    titre: 'Depuis l’orbite basse',
+    lieu: 'Orbite — 340 km altitude',
+    date: '11.03.2079',
+    astronaute: 'Dr. Yusuf Amara'
+  },
+  {
+    src: 'assets/nano3.png',
+    short: 'Le sol de l’autre monde',
+    titre: 'Le sol de l’autre monde',
+    lieu: 'Site d’atterrissage Omega',
+    date: '15.03.2079',
+    astronaute: 'Ing. Lena Kovač'
+  }
+];
+
 let idleTimer = null;
 let orbitPulseTimer = null;
+let activeGalleryIndex = 0;
+let galleryAttraction = null;
+let cursorTargetX = window.innerWidth / 2;
+let cursorTargetY = window.innerHeight / 2;
+let cursorActualX = cursorTargetX;
+let cursorActualY = cursorTargetY;
+
+function animateCursor() {
+  cursorActualX += (cursorTargetX - cursorActualX) * 0.18;
+  cursorActualY += (cursorTargetY - cursorActualY) * 0.18;
+  cursor.style.transform = `translate(${cursorActualX - 16}px, ${cursorActualY - 16}px)`;
+  requestAnimationFrame(animateCursor);
+}
+
+function renderGallery() {
+  if (!galleryGrid) return;
+
+  galleryGrid.innerHTML = galleryItems.map((item, index) => `
+    <a class="gallery-card scroll-reveal" href="#" data-gallery-index="${index}" data-gallery-date="${item.date}" aria-label="Ouvrir ${item.titre}">
+      <div class="gallery-media">
+        <img src="${item.src}" alt="${item.titre} — ${item.lieu}" loading="lazy" />
+      </div>
+      <div class="gallery-caption">
+        <span class="gallery-short">${item.short}</span>
+        <div class="gallery-mini">${item.lieu}</div>
+      </div>
+    </a>
+  `).join('');
+
+  galleryGrid.querySelectorAll('.gallery-card').forEach((card) => {
+    card.addEventListener('click', (event) => {
+      event.preventDefault();
+      openLightbox(Number(card.dataset.galleryIndex));
+    });
+
+    card.addEventListener('pointerenter', () => {
+      galleryTooltip.textContent = `Date : ${card.dataset.galleryDate}`;
+      galleryTooltip.classList.add('is-visible');
+      galleryTooltip.setAttribute('aria-hidden', 'false');
+      card.classList.add('is-magnetic');
+    });
+
+    card.addEventListener('pointermove', (event) => {
+      const rect = card.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const deltaX = event.clientX - centerX;
+      const deltaY = event.clientY - centerY;
+      const magnetStrength = 0.12;
+      const moveX = -deltaX * magnetStrength;
+      const moveY = -deltaY * magnetStrength;
+
+      card.style.transform = `translate(${moveX}px, ${moveY}px)`;
+
+      const offsetX = 18;
+      const offsetY = 18;
+      const maxX = window.innerWidth - galleryTooltip.offsetWidth - 16;
+      const maxY = window.innerHeight - galleryTooltip.offsetHeight - 16;
+      const x = Math.min(event.clientX + offsetX, maxX);
+      const y = Math.min(event.clientY + offsetY, maxY);
+      galleryTooltip.style.left = `${x}px`;
+      galleryTooltip.style.top = `${y}px`;
+
+      cursorTargetX = event.clientX + deltaX * 0.06;
+      cursorTargetY = event.clientY + deltaY * 0.06;
+      galleryAttraction = { card, centerX, centerY };
+    });
+
+    card.addEventListener('pointerleave', () => {
+      galleryTooltip.classList.remove('is-visible');
+      galleryTooltip.setAttribute('aria-hidden', 'true');
+      card.classList.remove('is-magnetic');
+      card.style.transform = '';
+      galleryAttraction = null;
+    });
+  });
+}
+
+function updateLightbox(index) {
+  const item = galleryItems[index];
+  activeGalleryIndex = index;
+  lightboxImage.src = item.src;
+  lightboxImage.alt = `${item.titre} — ${item.lieu}`;
+  lightboxTitle.textContent = item.titre;
+  lightboxMeta.textContent = `Lieu : ${item.lieu}\nDate : ${item.date}\nAstronaute : ${item.astronaute}`;
+}
+
+function openLightbox(index) {
+  updateLightbox(index);
+  lightbox.classList.add('is-open');
+  lightbox.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  lightbox.classList.remove('is-open');
+  lightbox.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+function goToGallery(offset) {
+  const nextIndex = (activeGalleryIndex + offset + galleryItems.length) % galleryItems.length;
+  updateLightbox(nextIndex);
+}
 
 function applyIdleState(isIdle) {
   rootElement.classList.toggle('is-idle', isIdle);
@@ -121,6 +261,8 @@ transmissionsList.innerHTML = transmissions.map(({ titre, date, type, contenu })
     <p>${contenu}</p>
   </article>
 `).join('');
+
+renderGallery();
 
 menuToggle.addEventListener('click', () => {
   const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
@@ -256,6 +398,10 @@ function moveCursor() {
 window.addEventListener('pointermove', (event) => {
   cursorX = event.clientX;
   cursorY = event.clientY;
+  if (!event.target.closest('.gallery-card')) {
+    cursorTargetX = event.clientX;
+    cursorTargetY = event.clientY;
+  }
   if (!rafId) rafId = requestAnimationFrame(moveCursor);
   resetIdleTimer();
 });
@@ -272,11 +418,43 @@ document.addEventListener('pointerover', (event) => {
   cursor.classList.toggle('is-hover', Boolean(event.target.closest(hoverTargets)));
 });
 
+window.addEventListener('scroll', () => {
+  galleryTooltip.classList.remove('is-visible');
+  galleryTooltip.setAttribute('aria-hidden', 'true');
+}, { passive: true });
+
+lightboxClose.addEventListener('click', closeLightbox);
+lightboxPrev.addEventListener('click', () => goToGallery(-1));
+lightboxNext.addEventListener('click', () => goToGallery(1));
+
+lightbox.addEventListener('click', (event) => {
+  if (event.target === lightbox || event.target === lightboxImage || event.target === lightboxMeta || event.target === lightboxTitle) {
+    closeLightbox();
+  }
+});
+
 ['scroll', 'keydown', 'touchstart', 'mousemove'].forEach((eventName) => {
   window.addEventListener(eventName, resetIdleTimer, { passive: true });
 });
 
+animateCursor();
+
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'ArrowLeft' && lightbox.classList.contains('is-open')) {
+    goToGallery(-1);
+    return;
+  }
+
+  if (event.key === 'ArrowRight' && lightbox.classList.contains('is-open')) {
+    goToGallery(1);
+    return;
+  }
+
+  if (event.key === 'Escape' && lightbox.classList.contains('is-open')) {
+    closeLightbox();
+    return;
+  }
+
   if (event.key === 'Escape') {
     siteNav.classList.remove('is-open');
     menuToggle.setAttribute('aria-expanded', 'false');

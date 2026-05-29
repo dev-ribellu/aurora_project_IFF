@@ -14,6 +14,7 @@
 <body>
   <div class="ambient-orbits" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"><div class="cursor-ring"></div><span></span></div>
+  <div class="gallery-tooltip" id="galleryTooltip" aria-hidden="true"></div>
 
   <header class="site-header">
     <div class="container header-inner">
@@ -33,6 +34,7 @@
         <a href="#accueil">Accueil</a>
         <a href="#mission">Mission</a>
         <a href="#transmissions">Transmissions</a>
+        <a href="#galerie">Galerie</a>
         <a href="#apropos">À propos</a>
       </nav>
     </div>
@@ -113,10 +115,21 @@
       <div class="container scroll-reveal">
         <div class="section-heading">
           <h2>Transmissions</h2>
-          </p>
+          <p>Les transmissions sont générées à partir d’un tableau JavaScript statique, facile à modifier : ajoutez un objet pour publier un nouveau message.</p>
         </div>
 
         <div class="transmissions-wrap" id="transmissionsList"></div>
+      </div>
+    </section>
+
+    <section class="section" id="galerie">
+      <div class="container scroll-reveal">
+        <div class="section-heading">
+          <h2>GALERIE — Premières images de Kepler-452c</h2>
+          <p>Trois images localisées et remplaçables documentent les premiers instants visuels de la mission. Clique pour ouvrir la version plein écran.</p>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid"></div>
       </div>
     </section>
 
@@ -164,6 +177,19 @@
       <div class="container"><div class="scanline" aria-hidden="true"></div></div>
     </footer>
   </main>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Visionneuse de galerie">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Fermer la galerie">×</button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" type="button" aria-label="Image précédente">‹</button>
+    <figure class="lightbox-content">
+      <img id="lightboxImage" alt="" />
+      <figcaption>
+        <div class="lightbox-title" id="lightboxTitle"></div>
+        <div class="lightbox-meta" id="lightboxMeta"></div>
+      </figcaption>
+    </figure>
+    <button class="lightbox-nav lightbox-next" id="lightboxNext" type="button" aria-label="Image suivante">›</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
