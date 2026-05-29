@@ -67,6 +67,16 @@ const MISSION_LOGS = [
     title: "Perte signal telémétrie secteur 7",
     detail: "Interruption communication 4min 32sec. Cause: interférence magnétique. Protocole de secours activé.",
     operator: "Cmdt. Sarah Chen"
+  },
+  {
+    id: "LOG-004",
+    timestamp: "2079.03.16 // 22:58:01 UTC",
+    type: "FAIBLE",
+    severity: "NEGLIGEABLE",
+    status: "RÉSOLU",
+    title: "Défaillance capteur thermique module 3",
+    detail: "Rien de grave, c'est un capteur redondant. Davis et moi on s'en occupe. Mais bon, 18 mois de voyage, fallait bien qu'un truc lâche un jour.",
+    operator: "Cmdt. Sarah Chen"
   }
 ];
 
