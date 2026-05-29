@@ -72,7 +72,7 @@ const MISSION_LOGS = [
     id: "LOG-004",
     timestamp: "2079.03.16 // 22:58:01 UTC",
     type: "FAIBLE",
-    severity: "NEGLIGEABLE",
+    severity: "FAIBLE",
     status: "RÉSOLU",
     title: "Défaillance capteur thermique module 3",
     detail: "Rien de grave, c'est un capteur redondant. Davis et moi on s'en occupe. Mais bon, 18 mois de voyage, fallait bien qu'un truc lâche un jour.",
