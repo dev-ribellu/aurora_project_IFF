@@ -37,6 +37,39 @@ const transmissions = [
   }
 ];
 
+const MISSION_LOGS = [
+  {
+    id: "LOG-001",
+    timestamp: "2079.03.11 // 14:32:07 UTC",
+    type: "SYSTÈME",
+    severity: "FAIBLE",
+    status: "RÉSOLU",
+    title: "Fluctuation panneau solaire C",
+    detail: "Baisse de rendement de 12% détectée sur le panneau C-3. Recalibration automatique effectuée.",
+    operator: "IA ARIA"
+  },
+  {
+    id: "LOG-002",
+    timestamp: "2079.03.12 // 09:15:44 UTC",
+    type: "ALERTE",
+    severity: "HAUTE",
+    status: "EN COURS",
+    title: "Anomalie atmosphérique Kepler-452c",
+    detail: "Composition atmosphérique inattendue détectée. Concentration O2 supérieure aux prévisions de 34%.",
+    operator: "Dr. Yusuf Amara"
+  },
+  {
+    id: "LOG-003",
+    timestamp: "2079.03.14 // 22:58:01 UTC",
+    type: "CRITIQUE",
+    severity: "HAUTE",
+    status: "RÉSOLU",
+    title: "Perte signal telémétrie secteur 7",
+    detail: "Interruption communication 4min 32sec. Cause: interférence magnétique. Protocole de secours activé.",
+    operator: "Cmdt. Sarah Chen"
+  }
+];
+
 const transmissionsList = document.getElementById('transmissionsList');
 const menuToggle = document.getElementById('menuToggle');
 const siteNav = document.getElementById('siteNav');
@@ -54,6 +87,11 @@ const lightboxClose = document.getElementById('lightboxClose');
 const lightboxPrev = document.getElementById('lightboxPrev');
 const lightboxNext = document.getElementById('lightboxNext');
 const galleryTooltip = document.getElementById('galleryTooltip');
+const journalSection = document.getElementById('journal');
+const journalBody = document.getElementById('journalBody');
+const journalOutput = document.getElementById('journalOutput');
+const journalStats = document.getElementById('journalStats');
+const journalReplay = document.getElementById('journalReplay');
 
 const idleDelay = 1500;
 const idleOrbits = [
@@ -100,12 +138,159 @@ let cursorTargetX = window.innerWidth / 2;
 let cursorTargetY = window.innerHeight / 2;
 let cursorActualX = cursorTargetX;
 let cursorActualY = cursorTargetY;
+let journalRunToken = 0;
+let journalHasPlayed = false;
+
+const TYPE_CLASS_MAP = {
+  'SYSTÈME': 'log-type-systeme',
+  'ALERTE': 'log-type-alerte',
+  'CRITIQUE': 'log-type-critique',
+  'INFO': 'log-type-info',
+  'RÉSOLU': 'log-type-resolu'
+};
+
+const SEVERITY_CLASS_MAP = {
+  'FAIBLE': 'severity-low',
+  'MOYENNE': 'severity-medium',
+  'HAUTE': 'severity-high'
+};
+
+const STATUS_META = {
+  'EN COURS': { label: '● EN COURS', className: 'status-progress' },
+  'RÉSOLU': { label: '✓ RÉSOLU', className: 'status-resolved' },
+  'SURVEILLANCE': { label: '◉ SURVEILLANCE', className: 'status-watch' }
+};
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function renderJournalStats() {
+  if (!journalStats) return;
+  const total = MISSION_LOGS.length;
+  const enCours = MISSION_LOGS.filter((log) => log.status === 'EN COURS').length;
+  const resolus = MISSION_LOGS.filter((log) => log.status === 'RÉSOLU').length;
+  journalStats.textContent = `INCIDENTS TOTAL: ${total} | EN COURS: ${enCours} | RÉSOLUS: ${resolus}`;
+}
+
+function removeTerminalCaret() {
+  journalOutput.querySelectorAll('.terminal-caret').forEach((node) => node.remove());
+}
+
+function appendTerminalCaret() {
+  removeTerminalCaret();
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  const caret = document.createElement('span');
+  caret.className = 'terminal-caret';
+  caret.textContent = '█';
+  line.appendChild(caret);
+  journalOutput.appendChild(line);
+}
+
+async function typeInto(element, text, runToken, speed = 30) {
+  element.textContent = '';
+  for (let i = 0; i < text.length; i += 1) {
+    if (runToken !== journalRunToken) return false;
+    element.textContent += text[i];
+    await wait(speed);
+  }
+  return true;
+}
+
+function createStatusTag(status) {
+  const info = STATUS_META[status] || STATUS_META['SURVEILLANCE'];
+  const tag = document.createElement('span');
+  tag.className = `status-tag ${info.className}`;
+  tag.textContent = info.label;
+  return tag;
+}
+
+async function playJournalLogs(forceReplay = false) {
+  if (!journalOutput || !journalStats) return;
+  if (journalHasPlayed && !forceReplay) return;
+
+  journalHasPlayed = true;
+  journalRunToken += 1;
+  const currentRunToken = journalRunToken;
+
+  journalOutput.innerHTML = '';
+  renderJournalStats();
+
+  for (const log of MISSION_LOGS) {
+    if (currentRunToken !== journalRunToken) return;
+
+    const entry = document.createElement('article');
+    entry.className = 'log-entry';
+
+    const lineMain = document.createElement('div');
+    lineMain.className = 'log-line log-main';
+
+    const mainText = document.createElement('span');
+    const typeClass = TYPE_CLASS_MAP[log.type] || 'log-type-info';
+    mainText.className = typeClass;
+    lineMain.appendChild(mainText);
+
+    const severityBadge = document.createElement('span');
+    const severityClass = SEVERITY_CLASS_MAP[log.severity] || 'severity-medium';
+    severityBadge.className = `severity-badge ${severityClass}`;
+    severityBadge.textContent = log.severity;
+
+    const statusTag = createStatusTag(log.status);
+
+    const lineDetail = document.createElement('div');
+    lineDetail.className = 'log-line log-detail';
+
+    const lineOperator = document.createElement('div');
+    lineOperator.className = 'log-line log-operator';
+
+    entry.appendChild(lineMain);
+    entry.appendChild(lineDetail);
+    entry.appendChild(lineOperator);
+    journalOutput.appendChild(entry);
+
+    const firstLineText = `> [${log.timestamp}] [${log.type}] ${log.title}`;
+    const firstOk = await typeInto(mainText, firstLineText, currentRunToken, 30);
+    if (!firstOk) return;
+
+    lineMain.appendChild(severityBadge);
+    lineMain.appendChild(statusTag);
+
+    const detailOk = await typeInto(lineDetail, `  └─ ${log.detail}`, currentRunToken, 30);
+    if (!detailOk) return;
+
+    const operatorOk = await typeInto(lineOperator, `  └─ OPR: ${log.operator}`, currentRunToken, 30);
+    if (!operatorOk) return;
+
+    appendTerminalCaret();
+    if (journalBody) {
+      journalBody.scrollTop = journalBody.scrollHeight;
+    }
+    await wait(400);
+  }
+
+  appendTerminalCaret();
+}
 
 function animateCursor() {
   cursorActualX += (cursorTargetX - cursorActualX) * 0.18;
   cursorActualY += (cursorTargetY - cursorActualY) * 0.18;
   cursor.style.transform = `translate(${cursorActualX - 16}px, ${cursorActualY - 16}px)`;
   requestAnimationFrame(animateCursor);
+}
+
+function initJournalObserver() {
+  if (!journalSection) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        playJournalLogs(false);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  observer.observe(journalSection);
 }
 
 function renderGallery() {
@@ -263,6 +448,17 @@ transmissionsList.innerHTML = transmissions.map(({ titre, date, type, contenu })
 `).join('');
 
 renderGallery();
+initJournalObserver();
+renderJournalStats();
+window.setTimeout(() => {
+  playJournalLogs(false);
+}, 220);
+
+if (journalReplay) {
+  journalReplay.addEventListener('click', () => {
+    playJournalLogs(true);
+  });
+}
 
 menuToggle.addEventListener('click', () => {
   const expanded = menuToggle.getAttribute('aria-expanded') === 'true';

@@ -34,6 +34,7 @@
         <a href="#accueil">Accueil</a>
         <a href="#mission">Mission</a>
         <a href="#transmissions">Transmissions</a>
+        <a href="#journal">Journal</a>
         <a href="#galerie">Galerie</a>
         <a href="#apropos">À propos</a>
       </nav>
@@ -118,6 +119,37 @@
         </div>
 
         <div class="transmissions-wrap" id="transmissionsList"></div>
+      </div>
+    </section>
+
+    <section class="section" id="journal">
+      <div class="container scroll-reveal">
+        <div class="section-heading">
+          <h2>JOURNAL DE BORD</h2>
+          <p>Console opérationnelle en temps réel des incidents Odyssey-IV, diffusée sous format terminal sécurisé IFF.</p>
+        </div>
+
+        <div class="journal-shell">
+          <div class="journal-header">
+            <div class="journal-dots" aria-hidden="true">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <div class="journal-title">ODYSSEY-IV // INCIDENT LOG v2.4.1</div>
+          </div>
+
+          <div class="journal-toolbar">
+            <div class="journal-stats" id="journalStats" aria-live="polite">
+              INCIDENTS TOTAL: 0 | EN COURS: 0 | RÉSOLUS: 0
+            </div>
+            <button class="journal-replay" id="journalReplay" type="button">&gt; REPLAY</button>
+          </div>
+
+          <div class="journal-body" id="journalBody">
+            <div class="journal-output" id="journalOutput" aria-live="polite"></div>
+          </div>
+        </div>
       </div>
     </section>
 
