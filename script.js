@@ -1,40 +1,22 @@
 const transmissions = [
   {
-    titre: "Signal confirmé sur orbite basse",
-    date: "2079-04-17",
-    type: "INFO",
-    contenu: "Les antennes de surface ont capté un motif de retour régulier sur trois fenêtres de communication consécutives."
-  },
-  {
-    titre: "Alerte de densité atmosphérique",
-    date: "2079-04-18",
+    titre: "Détection signal électromagnétique anormal",
+    date: "2079-05-30",
     type: "ALERTE",
-    contenu: "Une variation inattendue dans les couches supérieures impose une recalibration immédiate des filtres de télémétrie."
+    contenu: "Source : Vallée d'Aurelia, secteur 7. Durée : 3 min 42s. Fréquence : non répertoriée dans les bases de données connues. Équipage informé."
   },
   {
-    titre: "Rapport de première lecture",
-    date: "2079-04-19",
-    type: "RAPPORT",
-    contenu: "Les premiers spectres exploitables suggèrent une composition compatible avec des environnements stables à long terme."
-  },
-  {
-    titre: "Fenêtre de diffusion prolongée",
-    date: "2079-04-20",
-    type: "INFO",
-    contenu: "Le centre autorise une retransmission continue pendant 9 heures afin d’accompagner les équipes de terrain et la presse internationale."
-  },
-  {
-    titre: "Anomalie sur le vecteur de guidage",
-    date: "2079-04-21",
+    titre: "Tempête solaire et débit réduit",
+    date: "2079-05-30",
     type: "ALERTE",
-    contenu: "Les calculateurs ont détecté une dérive minime mais persistante du vecteur principal. Surveillance renforcée en cours."
+    contenu: "Tempête solaire de classe M4 détectée. Impact sur les communications dans 45 minutes. Débit réduit à 10% et protocole COM-DEGRAD activé."
   },
   {
-    titre: "Protocole de synthèse activé",
-    date: "2079-04-22",
-    type: "RAPPORT",
-    contenu: "Toutes les séquences entrantes sont désormais résumées en temps réel pour la cellule IFF et les relais partenaires."
-  }
+    titre: "Premier contact visuel",
+    date: "2079-05-29",
+    type: "INFO",
+    contenu: "Premier survol basse altitude de la zone Alpha : la vallée d'Aurelia est confirmée immense et les formations rocheuses stratifiées apparaissent clairement."
+  },
 ];
 
 const DEGRADED_MODE = false;
@@ -148,6 +130,16 @@ const MISSION_LOGS = [
     detail: "Maman, Papa... Je sais que vous recevrez ça dans 20 minutes. Aujourd'hui ça fait exactement 2 ans que je suis partie de la maison. Je voulais juste vous dire... la Terre me manque. Vous me manquez. Mais quand je regarde par le hublot et que je vois cette planète qu'aucun humain n'a jamais vue de si près... je sais pourquoi je suis là. Je vous aime.",
     operator: "Cmdt. Sarah Chen",
     note: "Ce message a fuité sur les réseaux sociaux. Réaction publique très positive. Forte émotion. Opportunité de communication émotionnelle autour de l'aspect humain de la mission."
+  },
+  {
+    id: "EVT-05",
+    timestamp: "2079.05.30 // 04:18:42 UTC",
+    type: "ALERTE",
+    severity: "MOYENNE",
+    status: "EN COURS",
+    title: "Détection signal électromagnétique anormal",
+    detail: "Source : Vallée d'Aurelia, secteur 7. Durée : 3 min 42s. Fréquence : non répertoriée dans les bases de données connues. Équipage informé.",
+    operator: "Centre de contrôle Aurora"
   },
 ];
 
