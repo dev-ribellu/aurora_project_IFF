@@ -82,10 +82,22 @@ const MISSION_LOGS = [
     id: "MESSAGE-001",
     timestamp: "2079.03.19 // 10:58:01 UTC",
     type: "INFO",
+    severity: "MOYENNE",
     status: "RÉSOLU",
     title: "rapport de fin de nuit",
     detail: "Tempête solaire en décroissance, signal qui se stabilise. L'équipage va bien. Le capteur est réparé. On se prépare pour la suite : première EVA de reconnaissance sur le site Delta prévue cet après-midi. Laurent et Wong sont impatients. Bonne matinée, la Terre.",
     operator: "Spc. N. Davis"
+  },
+  {
+    id: "MESSAGE-002",
+    timestamp: "2079.03.21 // 18:42:13 UTC",
+    type: "COMMUNICATION",
+    severity: "FAIBLE",
+    status: "SURVEILLANCE",
+    title: "message personnel diffusé au public",
+    detail: "Maman, Papa... Je sais que vous recevrez ça dans 20 minutes. Aujourd'hui ça fait exactement 2 ans que je suis partie de la maison. Je voulais juste vous dire... la Terre me manque. Vous me manquez. Mais quand je regarde par le hublot et que je vois cette planète qu'aucun humain n'a jamais vue de si près... je sais pourquoi je suis là. Je vous aime.",
+    operator: "Cmdt. Sarah Chen"
+    
   },
 ];
 
@@ -165,6 +177,7 @@ const TYPE_CLASS_MAP = {
   'ALERTE': 'log-type-alerte',
   'CRITIQUE': 'log-type-critique',
   'INFO': 'log-type-info',
+  'COMMUNICATION': 'log-type-communication',
   'RÉSOLU': 'log-type-resolu'
 };
 
@@ -241,6 +254,9 @@ async function playJournalLogs(forceReplay = false) {
 
     const entry = document.createElement('article');
     entry.className = 'log-entry';
+    if (log.type === 'COMMUNICATION') {
+      entry.classList.add('log-entry-communication');
+    }
 
     const lineMain = document.createElement('div');
     lineMain.className = 'log-line log-main';
@@ -263,8 +279,14 @@ async function playJournalLogs(forceReplay = false) {
     const lineOperator = document.createElement('div');
     lineOperator.className = 'log-line log-operator';
 
+    const lineNote = document.createElement('div');
+    lineNote.className = 'log-line log-note';
+
     entry.appendChild(lineMain);
     entry.appendChild(lineDetail);
+    if (log.note) {
+      entry.appendChild(lineNote);
+    }
     entry.appendChild(lineOperator);
     journalOutput.appendChild(entry);
 
@@ -277,6 +299,11 @@ async function playJournalLogs(forceReplay = false) {
 
     const detailOk = await typeInto(lineDetail, `  └─ ${log.detail}`, currentRunToken, 30);
     if (!detailOk) return;
+
+    if (log.note) {
+      const noteOk = await typeInto(lineNote, `  └─ NOTE COM: ${log.note}`, currentRunToken, 24);
+      if (!noteOk) return;
+    }
 
     const operatorOk = await typeInto(lineOperator, `  └─ OPR: ${log.operator}`, currentRunToken, 30);
     if (!operatorOk) return;

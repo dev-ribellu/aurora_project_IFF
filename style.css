@@ -681,6 +681,14 @@ h1 {
   padding-left: 12px;
 }
 
+.log-entry-communication {
+  border-left-color: rgba(0, 229, 255, 0.6);
+  background: linear-gradient(90deg, rgba(0, 229, 255, 0.08), transparent 72%);
+  border-radius: 0 12px 12px 0;
+  padding: 8px 12px;
+  box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.16);
+}
+
 .log-line {
   font-size: 0.88rem;
   line-height: 1.7;
@@ -701,10 +709,17 @@ h1 {
   padding-left: 4px;
 }
 
+.log-note {
+  color: rgba(255, 232, 181, 0.96);
+  padding-left: 4px;
+  font-style: italic;
+}
+
 .log-type-systeme { color: #00e5ff; }
 .log-type-alerte { color: #f0a500; }
 .log-type-critique { color: #ff3c3c; }
 .log-type-info { color: #a0a0c0; }
+.log-type-communication { color: #9ef8ff; text-shadow: 0 0 10px rgba(0, 229, 255, 0.35); }
 .log-type-resolu { color: #00ff88; }
 
 .severity-badge,
