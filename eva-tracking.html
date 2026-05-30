@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I Fabulosi Filette | EVA Tracking EVT08-C</title>
+  <meta name="description" content="Tableau de bord EVA en direct pour la mission EVT08-C, secteur 7." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&family=Questrial&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="assets/logo_jaune.png" />
+</head>
+<body class="eva-page">
+  <div class="ambient-orbits" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><div class="cursor-ring"></div><span></span></div>
+  <div class="gallery-tooltip" id="galleryTooltip" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html#accueil" aria-label="Retour à l'accueil">
+        <img class="brand-logo" src="assets/logo_rose.png" alt="" aria-hidden="true" />
+        <div class="brand-text">
+          <strong>I Fabulosi Filette</strong>
+          <span>Mission EVT08-C · EVA Tracking</span>
+        </div>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Ouvrir le menu">
+        <span></span>
+      </button>
+
+      <nav class="nav" id="siteNav">
+        <a href="index.html#accueil">Accueil</a>
+        <a href="index.html#mission">Mission</a>
+        <a href="index.html#journal">Journal</a>
+        <a href="index.html#galerie">Galerie</a>
+        <a href="index.html#apropos">À propos</a>
+        <a href="eva-tracking.html" aria-current="page">EVA tracking</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page eva-page">
+    <section class="hero eva-hero" id="accueil">
+      <div class="container hero-grid">
+        <div class="hero-copy scroll-reveal">
+          <div class="eyebrow"><span class="live-dot" aria-hidden="true"></span> EVA en direct · Secteur 7</div>
+          <h1>EVA TRACKING — LIVE</h1>
+          <div class="hero-subtitle">Mission EVT08-C · External operations feed</div>
+          <p class="typewriter"><strong id="typewriter">Connexion stable. L'équipage progresse vers le point de prélèvement.</strong></p>
+          <p class="eva-kicker">Tableau de bord immersif pour le suivi des sorties extravéhiculaires, avec télémétrie, carte de zone et journal opérationnel en direct.</p>
+
+          <div class="eva-dashboard-grid" aria-label="Indicateurs EVA">
+            <article class="eva-summary-card">
+              <span class="eva-summary-label">Mission ID</span>
+              <p class="eva-summary-value">EVT08-C</p>
+            </article>
+            <article class="eva-summary-card">
+              <span class="eva-summary-label">Mission timer</span>
+              <p class="eva-summary-value" id="evaTimerHero">00:00:00</p>
+            </article>
+            <article class="eva-summary-card">
+              <span class="eva-summary-label">Crew involved</span>
+              <p class="eva-summary-value" id="evaCrewCount">03 members</p>
+            </article>
+            <article class="eva-summary-card">
+              <span class="eva-summary-label">Target sector</span>
+              <p class="eva-summary-value">Sector 7</p>
+            </article>
+          </div>
+        </div>
+
+        <aside class="hero-panel scroll-reveal" aria-label="Visualisation EVA">
+          <canvas id="starsCanvas"></canvas>
+          <div class="panel-overlay">
+            <div class="panel-chip" id="evaStatusChip"><span class="status-dot" aria-hidden="true"></span><span id="evaStatusLabel">EN COURS</span></div>
+            <div class="panel-grid">
+              <div class="panel-card">
+                <span class="mini">CURRENT STATUS</span>
+                <p id="evaCurrentStatusPanel">Externe E.V.A. active. Suivi thermique et radio nominal.</p>
+              </div>
+              <div class="panel-card">
+                <span class="mini">MISSION TIMER</span>
+                <p id="evaTimerPanel">00:00:00 elapsed</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="status">
+      <div class="container scroll-reveal">
+        <div class="section-heading">
+          <h2>EVA Status Bar</h2>
+          <p>Vue synthétique de l'état courant, des membres engagés et de l'avancement du parcours extérieur.</p>
+        </div>
+
+        <div class="eva-shell eva-status-bar">
+          <div class="eva-status-chip" id="evaStatusChipInline">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span id="evaStatusLabelInline">EN COURS</span>
+          </div>
+          <div id="evaCurrentStatus">Sortie extravéhiculaire stabilisée. Déplacement vers le corridor rocheux du secteur 7.</div>
+          <div class="eva-status-track" aria-hidden="true">
+            <div class="eva-status-track-fill" id="evaStatusFill"></div>
+          </div>
+          <div class="eva-crew-list" id="evaCrewList" aria-label="Membres de l'équipage">
+            <span class="eva-crew-tag">Cmdt. Sarah Chen</span>
+            <span class="eva-crew-tag">Dr. Yusuf Amara</span>
+            <span class="eva-crew-tag">Spc. N. Davis</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="feed-map">
+      <div class="container scroll-reveal">
+        <div class="section-heading">
+          <h2>Live Updates Feed</h2>
+          <p>Journal temps réel des transmissions, avec les entrées les plus récentes affichées en haut et un défilement conservé.</p>
+        </div>
+
+        <div class="eva-dashboard-layout">
+          <article class="eva-feed-shell">
+            <div class="eva-feed-header">
+              <h3>Timestamped logs</h3>
+              <p>Most recent at top</p>
+            </div>
+            <div class="eva-feed-list" id="evaFeed" aria-live="polite" aria-label="Flux des mises à jour EVA"></div>
+          </article>
+
+          <aside class="eva-map-shell eva-feed-shell">
+            <div class="eva-map-header">
+              <h3>Map section</h3>
+              <p>Sector 7 location display</p>
+            </div>
+            <div class="eva-map-stage">
+              <div class="eva-map-grid" aria-hidden="true">
+                <div class="eva-map-marker" id="evaMapMarker" aria-hidden="true"></div>
+              </div>
+            </div>
+            <div class="eva-map-panel" style="padding: 18px;">
+              <div class="eva-coords">
+                <span class="label">Coordinates</span>
+                <div class="value" id="evaCoordinates">LAT 14°07' 42" N · LON 52°19' 18" E · GRID D-4</div>
+              </div>
+              <div class="eva-readout">
+                <span class="label">Sector note</span>
+                <div class="value" id="evaSectorNote">Rock shelf integrity good. Signal reflections remain intermittent.</div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="media">
+      <div class="container scroll-reveal">
+        <div class="section-heading">
+          <h2>Media Section</h2>
+          <p>Image gallery grid using the same dark panel language as the main site.</p>
+        </div>
+
+        <div class="eva-media-grid">
+          <article class="gallery-card">
+            <div class="gallery-media"><img src="assets/Fichier 4.png" alt="Capture EVA 1" loading="lazy" /></div>
+            <div class="gallery-caption">
+              <span class="gallery-short">Airlock departure</span>
+              <div class="gallery-mini">Exterior camera · Sector 7</div>
+            </div>
+          </article>
+          <article class="gallery-card">
+            <div class="gallery-media"><img src="assets/Fichier 5.png" alt="Capture EVA 2" loading="lazy" /></div>
+            <div class="gallery-caption">
+              <span class="gallery-short">Thermal scan</span>
+              <div class="gallery-mini">Suit telemetry · mid-route</div>
+            </div>
+          </article>
+          <article class="gallery-card">
+            <div class="gallery-media"><img src="assets/Fichier 6.png" alt="Capture EVA 3" loading="lazy" /></div>
+            <div class="gallery-caption">
+              <span class="gallery-short">Sector ridge</span>
+              <div class="gallery-mini">Rock line · low sun angle</div>
+            </div>
+          </article>
+          <article class="gallery-card">
+            <div class="gallery-media"><img src="assets/Fichier 7.png" alt="Capture EVA 4" loading="lazy" /></div>
+            <div class="gallery-caption">
+              <span class="gallery-short">Sample point</span>
+              <div class="gallery-mini">Sampling zone · Sector 7</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="readouts">
+      <div class="container scroll-reveal">
+        <div class="section-heading">
+          <h2>Data Readouts</h2>
+          <p>Live values drift slowly to simulate the constant telemetry changes coming back from the suit stack.</p>
+        </div>
+
+        <div class="eva-data-grid" id="evaReadouts">
+          <article class="eva-readout">
+            <span class="label">Suit pressure</span>
+            <div class="value" id="evaPressure">101.3 kPa</div>
+          </article>
+          <article class="eva-readout">
+            <span class="label">O2 reserve</span>
+            <div class="value" id="evaOxygen">97%</div>
+          </article>
+          <article class="eva-readout">
+            <span class="label">Thermal delta</span>
+            <div class="value" id="evaThermal">+02.4 °C</div>
+          </article>
+          <article class="eva-readout">
+            <span class="label">Comms latency</span>
+            <div class="value" id="evaLatency">84 ms</div>
+          </article>
+          <article class="eva-readout">
+            <span class="label">Battery reserve</span>
+            <div class="value" id="evaBattery">91%</div>
+          </article>
+          <article class="eva-readout">
+            <span class="label">Local timecode</span>
+            <div class="value" id="evaTimecode">UTC+0 · 03:00:00</div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    (() => {
+      const feed = document.getElementById('evaFeed');
+      const timerHero = document.getElementById('evaTimerHero');
+      const timerPanel = document.getElementById('evaTimerPanel');
+      const currentStatus = document.getElementById('evaCurrentStatus');
+      const currentStatusPanel = document.getElementById('evaCurrentStatusPanel');
+      const statusFill = document.getElementById('evaStatusFill');
+      const statusLabel = document.getElementById('evaStatusLabel');
+      const statusLabelInline = document.getElementById('evaStatusLabelInline');
+      const crewCount = document.getElementById('evaCrewCount');
+      const coordinates = document.getElementById('evaCoordinates');
+      const sectorNote = document.getElementById('evaSectorNote');
+      const mapMarker = document.getElementById('evaMapMarker');
+      const pressure = document.getElementById('evaPressure');
+      const oxygen = document.getElementById('evaOxygen');
+      const thermal = document.getElementById('evaThermal');
+      const latency = document.getElementById('evaLatency');
+      const battery = document.getElementById('evaBattery');
+      const timecode = document.getElementById('evaTimecode');
+      const readoutNodes = document.querySelectorAll('.eva-readout');
+
+      if (!feed || !timerHero || !timerPanel || !currentStatus || !statusFill || !statusLabel || !pressure || !oxygen || !thermal || !latency || !battery || !timecode) {
+        return;
+      }
+
+      const missionStart = new Date();
+      missionStart.setHours(11, 30, 0, 0);
+      if (missionStart.getTime() > Date.now()) {
+        missionStart.setDate(missionStart.getDate() - 1);
+      }
+      const startedAt = missionStart.getTime();
+      const baseLogs = [
+        {
+          message: 'Airlock 2 sealed. Team has crossed into open terrain without anomaly.',
+          source: 'AIRLOCK LOG'
+        },
+        {
+          message: 'Thermal tether shows nominal load. Shadow sweep completed on the first ridge.',
+          source: 'SUIT TELEMETRY'
+        },
+        {
+          message: 'Rock surface appears layered. Fine dust is reflecting more light than expected.',
+          source: 'VISUAL FEED'
+        },
+        {
+          message: 'Sector 7 beacon acquired. Marker locked and heading north-east by 18 meters.',
+          source: 'NAVIGATION'
+        }
+      ];
+
+      const statusMessages = [
+        'External EVA active. Thermal and radio checks remain nominal.',
+        'Suit team moving across the corridor. Visibility stable.',
+        'Micro-vibrations detected in the ground grid. Proceeding with caution.',
+        'Sample collection underway. No breach in pressure integrity.'
+      ];
+
+      let logIndex = 0;
+      let xOffset = 64;
+      let yOffset = 38;
+      let telemetry = {
+        pressure: 101.3,
+        oxygen: 97,
+        thermal: 2.4,
+        latency: 84,
+        battery: 91
+      };
+
+      function pad(value) {
+        return String(value).padStart(2, '0');
+      }
+
+      function formatElapsed(ms) {
+        const totalSeconds = Math.floor(ms / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+      }
+
+      function formatUtcTime(date) {
+        const hours = pad(date.getUTCHours());
+        const minutes = pad(date.getUTCMinutes());
+        const seconds = pad(date.getUTCSeconds());
+        return `${hours}:${minutes}:${seconds} UTC`;
+      }
+
+      function createFeedItem(message, source, timeStamp) {
+        const entry = document.createElement('article');
+        entry.className = 'eva-feed-item scroll-reveal is-visible';
+        entry.innerHTML = `
+          <span class="time">${timeStamp}</span>
+          <p class="message">${message}</p>
+          <span class="source">${source}</span>
+        `;
+        return entry;
+      }
+
+      function renderFeed(message, source, timeStamp) {
+        const item = createFeedItem(message, source, timeStamp);
+        feed.prepend(item);
+
+        while (feed.children.length > 8) {
+          feed.removeChild(feed.lastElementChild);
+        }
+      }
+
+      function updateTimer() {
+        const elapsed = formatElapsed(Date.now() - startedAt);
+        timerHero.textContent = elapsed;
+        timerPanel.textContent = `${elapsed} elapsed`;
+      }
+
+      function updateStatus() {
+        const nextMessage = statusMessages[logIndex % statusMessages.length];
+        currentStatus.textContent = nextMessage;
+        currentStatusPanel.textContent = nextMessage;
+      }
+
+      function updateTelemetry() {
+        telemetry.pressure = Math.max(96.2, Math.min(102.8, telemetry.pressure + (Math.random() * 0.5 - 0.18)));
+        telemetry.oxygen = Math.max(78, Math.min(99, telemetry.oxygen + (Math.random() * 0.7 - 0.15)));
+        telemetry.thermal = Math.max(-2.4, Math.min(7.8, telemetry.thermal + (Math.random() * 0.4 - 0.12)));
+        telemetry.latency = Math.max(52, Math.min(146, telemetry.latency + (Math.random() * 10 - 3)));
+        telemetry.battery = Math.max(68, Math.min(98, telemetry.battery - (Math.random() * 0.35)));
+
+        pressure.textContent = `${telemetry.pressure.toFixed(1)} kPa`;
+        oxygen.textContent = `${Math.round(telemetry.oxygen)}%`;
+        thermal.textContent = `${telemetry.thermal >= 0 ? '+' : ''}${telemetry.thermal.toFixed(1)} °C`;
+        latency.textContent = `${Math.round(telemetry.latency)} ms`;
+        battery.textContent = `${Math.round(telemetry.battery)}%`;
+        timecode.textContent = `UTC+0 · ${formatElapsed(Date.now() - startedAt)}`;
+
+        const fill = Math.max(42, Math.min(98, telemetry.oxygen));
+        statusFill.style.width = `${fill}%`;
+
+        if (mapMarker) {
+          xOffset = 64 + Math.sin(Date.now() / 6000) * 3;
+          yOffset = 38 + Math.cos(Date.now() / 7500) * 2;
+          mapMarker.style.left = `${xOffset}%`;
+          mapMarker.style.top = `${yOffset}%`;
+        }
+
+        if (coordinates) {
+          const latMinutes = 7 + Math.floor((Date.now() / 1000) % 3);
+          const lonMinutes = 19 + Math.floor((Date.now() / 1200) % 3);
+          coordinates.textContent = `LAT 14°${pad(latMinutes)}' 42" N · LON 52°${pad(lonMinutes)}' 18" E · GRID D-4`;
+        }
+
+        if (sectorNote) {
+          sectorNote.textContent = [
+            'Rock shelf integrity good. Signal reflections remain intermittent.',
+            'Ground texture stable. Heat return levels have risen slightly.',
+            'Secondary scan confirmed no obstruction in the east corridor.'
+          ][logIndex % 3];
+        }
+
+        updateStatus();
+        if (readoutNodes.length) {
+          readoutNodes.forEach((node) => node.classList.remove('is-highlighted'));
+          const highlighted = readoutNodes[logIndex % readoutNodes.length];
+          highlighted.classList.add('is-highlighted');
+        }
+
+        const stamp = formatUtcTime(new Date());
+        renderFeed(
+          baseLogs[logIndex % baseLogs.length].message,
+          baseLogs[logIndex % baseLogs.length].source,
+          stamp
+        );
+
+        logIndex += 1;
+      }
+
+      if (crewCount) {
+        crewCount.textContent = '03 members';
+      }
+
+      baseLogs.slice().reverse().forEach((entry, index) => {
+        const stamp = formatUtcTime(new Date(Date.now() - (index + 1) * 24000));
+        feed.appendChild(createFeedItem(entry.message, entry.source, stamp));
+      });
+
+      updateTimer();
+      updateTelemetry();
+
+      window.setInterval(updateTimer, 1000);
+      window.setInterval(updateTelemetry, 4500);
+    })();
+  </script>
+</body>
+</html>

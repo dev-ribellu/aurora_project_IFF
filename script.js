@@ -1,5 +1,11 @@
 const transmissions = [
   {
+    titre: "Transmission Odyssey IV",
+    date: "2079-05-30",
+    type: "INFO",
+    contenu: "CCA, Laurent et Wong en approche du secteur 7. Visibilité correcte. Sol stable. On aperçoit... attendez... il y a quelque chose qui reflète la lumière à 200 mètres. Ce n'est pas rocheux. On continue. C'est... c'est une formation cristalline. Jamais vu ça. Elle est translucide, haute d'environ 3 mètres, et elle pulse. Faiblement, mais de manière régulière. Patel va perdre la tête quand il verra les images."
+  },
+  {
     titre: "Détection signal électromagnétique anormal",
     date: "2079-05-30",
     type: "ALERTE",
@@ -48,6 +54,7 @@ const ALERT_DATA = {
 };
 
 const MISSION_LOGS = [
+  
   {
     id: "LOG-001",
     timestamp: "2079.03.11 // 14:32:07 UTC",
@@ -141,6 +148,17 @@ const MISSION_LOGS = [
     detail: "Source : Vallée d'Aurelia, secteur 7. Durée : 3 min 42s. Fréquence : non répertoriée dans les bases de données connues. Équipage informé.",
     operator: "Centre de contrôle Aurora"
   },
+  {
+    id: "EVT-06",
+    timestamp: "2079.05.30 // 03:12:09 UTC",
+    type: "INFO",
+    severity: "MOYENNE",
+    status: "SURVEILLANCE",
+    title: "Transmission Odyssey IV",
+    detail: "CCA, Laurent et Wong en approche du secteur 7. Visibilité correcte. Sol stable. Une formation cristalline translucide a été observée à environ 200 mètres. Elle pulse faiblement de manière régulière. Images en cours d'envoi.",
+    operator: "Laurent / Wong"
+  }
+  
 ];
 
 const transmissionsList = document.getElementById('transmissionsList');
@@ -813,16 +831,18 @@ const badgeClass = (type) => {
   return 'report';
 };
 
-transmissionsList.innerHTML = transmissions.map(({ titre, date, type, contenu }) => `
-  <article class="transmission scroll-reveal">
-    <div class="meta-line">
-      <span class="badge ${badgeClass(type)}">${type}</span>
-      <span>${date}</span>
-    </div>
-    <h3>${titre}</h3>
-    <p>${contenu}</p>
-  </article>
-`).join('');
+if (transmissionsList) {
+  transmissionsList.innerHTML = transmissions.map(({ titre, date, type, contenu }) => `
+    <article class="transmission scroll-reveal">
+      <div class="meta-line">
+        <span class="badge ${badgeClass(type)}">${type}</span>
+        <span>${date}</span>
+      </div>
+      <h3>${titre}</h3>
+      <p>${contenu}</p>
+    </article>
+  `).join('');
+}
 
 renderAlertCard();
 document.querySelectorAll('h1, h2').forEach((heading) => {
@@ -878,20 +898,22 @@ if (degradedToggle) {
   });
 }
 
-menuToggle.addEventListener('click', () => {
-  const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
-  menuToggle.setAttribute('aria-expanded', String(!expanded));
-  siteNav.classList.toggle('is-open', !expanded);
-  menuToggle.setAttribute('aria-label', expanded ? 'Ouvrir le menu' : 'Fermer le menu');
-});
-
-siteNav.querySelectorAll('a').forEach((link) => {
-  link.addEventListener('click', () => {
-    siteNav.classList.remove('is-open');
-    menuToggle.setAttribute('aria-expanded', 'false');
-    menuToggle.setAttribute('aria-label', 'Ouvrir le menu');
+if (menuToggle && siteNav) {
+  menuToggle.addEventListener('click', () => {
+    const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+    menuToggle.setAttribute('aria-expanded', String(!expanded));
+    siteNav.classList.toggle('is-open', !expanded);
+    menuToggle.setAttribute('aria-label', expanded ? 'Ouvrir le menu' : 'Fermer le menu');
   });
-});
+
+  siteNav.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      siteNav.classList.remove('is-open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Ouvrir le menu');
+    });
+  });
+}
 
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
@@ -929,7 +951,10 @@ const statsObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.45 });
 
-statsObserver.observe(document.querySelector('.hero-stats'));
+const heroStats = document.querySelector('.hero-stats');
+if (heroStats) {
+  statsObserver.observe(heroStats);
+}
 
 function typeText(element, text, speed = 34) {
   element.textContent = '';
@@ -946,133 +971,147 @@ function typeText(element, text, speed = 34) {
   tick();
 }
 
-typeText(typewriterEl, 'Le monde regarde. Nous transmettons.', 38);
+if (typewriterEl) {
+  typeText(typewriterEl, 'Le monde regarde. Nous transmettons.', 38);
+}
 
 const canvas = document.getElementById('starsCanvas');
-const ctx = canvas.getContext('2d');
-let stars = [];
-let width = 0;
-let height = 0;
+if (canvas) {
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  let width = 0;
+  let height = 0;
 
-function resizeCanvas() {
-  const ratio = Math.min(window.devicePixelRatio || 1, 2);
-  width = canvas.clientWidth;
-  height = canvas.clientHeight;
-  canvas.width = Math.floor(width * ratio);
-  canvas.height = Math.floor(height * ratio);
-  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-  stars = Array.from({ length: Math.max(80, Math.round((width * height) / 12000)) }, () => ({
-    x: Math.random() * width,
-    y: Math.random() * height,
-    r: Math.random() * 1.6 + 0.3,
-    s: Math.random() * 0.35 + 0.05,
-    a: Math.random() * 0.7 + 0.15
-  }));
+  function resizeCanvas() {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    width = canvas.clientWidth;
+    height = canvas.clientHeight;
+    canvas.width = Math.floor(width * ratio);
+    canvas.height = Math.floor(height * ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    stars = Array.from({ length: Math.max(80, Math.round((width * height) / 12000)) }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: Math.random() * 1.6 + 0.3,
+      s: Math.random() * 0.35 + 0.05,
+      a: Math.random() * 0.7 + 0.15
+    }));
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, width, height);
+    stars.forEach((star) => {
+      star.y += star.s;
+      if (star.y > height + 4) {
+        star.y = -4;
+        star.x = Math.random() * width;
+      }
+
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(240, 240, 255, ${star.a})`;
+      ctx.shadowColor = 'rgba(0, 229, 255, 0.8)';
+      ctx.shadowBlur = 8;
+      ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, 'rgba(123, 47, 255, 0.18)');
+    gradient.addColorStop(1, 'rgba(5, 5, 16, 0.02)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+
+    requestAnimationFrame(drawStars);
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  drawStars();
 }
-
-function drawStars() {
-  ctx.clearRect(0, 0, width, height);
-  stars.forEach((star) => {
-    star.y += star.s;
-    if (star.y > height + 4) {
-      star.y = -4;
-      star.x = Math.random() * width;
-    }
-
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(240, 240, 255, ${star.a})`;
-    ctx.shadowColor = 'rgba(0, 229, 255, 0.8)';
-    ctx.shadowBlur = 8;
-    ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-    ctx.fill();
-  });
-
-  const gradient = ctx.createLinearGradient(0, 0, 0, height);
-  gradient.addColorStop(0, 'rgba(123, 47, 255, 0.18)');
-  gradient.addColorStop(1, 'rgba(5, 5, 16, 0.02)');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, width, height);
-
-  requestAnimationFrame(drawStars);
-}
-
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-drawStars();
 
 let cursorX = window.innerWidth / 2;
 let cursorY = window.innerHeight / 2;
 let rafId = null;
 
 function moveCursor() {
+  if (!cursor) return;
   cursor.style.transform = `translate(${cursorX - 16}px, ${cursorY - 16}px)`;
   rafId = null;
 }
 
-window.addEventListener('pointermove', (event) => {
-  cursorX = event.clientX;
-  cursorY = event.clientY;
-  if (!event.target.closest('.gallery-card')) {
-    cursorTargetX = event.clientX;
-    cursorTargetY = event.clientY;
-  }
-  if (!rafId) rafId = requestAnimationFrame(moveCursor);
-  resetIdleTimer();
-});
+if (cursor) {
+  window.addEventListener('pointermove', (event) => {
+    cursorX = event.clientX;
+    cursorY = event.clientY;
+    if (!event.target.closest('.gallery-card')) {
+      cursorTargetX = event.clientX;
+      cursorTargetY = event.clientY;
+    }
+    if (!rafId) rafId = requestAnimationFrame(moveCursor);
+    resetIdleTimer();
+  });
 
-window.addEventListener('pointerleave', () => {
-  cursor.style.opacity = '0';
-});
+  window.addEventListener('pointerleave', () => {
+    cursor.style.opacity = '0';
+  });
 
-window.addEventListener('pointerenter', () => {
-  cursor.style.opacity = '1';
-});
+  window.addEventListener('pointerenter', () => {
+    cursor.style.opacity = '1';
+  });
 
-document.addEventListener('pointerover', (event) => {
-  cursor.classList.toggle('is-hover', Boolean(event.target.closest(hoverTargets)));
-});
+  document.addEventListener('pointerover', (event) => {
+    cursor.classList.toggle('is-hover', Boolean(event.target.closest(hoverTargets)));
+  });
+}
 
 window.addEventListener('scroll', () => {
+  if (!galleryTooltip) return;
   galleryTooltip.classList.remove('is-visible');
   galleryTooltip.setAttribute('aria-hidden', 'true');
 }, { passive: true });
 
-lightboxClose.addEventListener('click', closeLightbox);
-lightboxPrev.addEventListener('click', () => goToGallery(-1));
-lightboxNext.addEventListener('click', () => goToGallery(1));
+if (lightbox && lightboxClose && lightboxPrev && lightboxNext) {
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxPrev.addEventListener('click', () => goToGallery(-1));
+  lightboxNext.addEventListener('click', () => goToGallery(1));
 
-lightbox.addEventListener('click', (event) => {
-  if (event.target === lightbox || event.target === lightboxImage || event.target === lightboxMeta || event.target === lightboxTitle) {
-    closeLightbox();
-  }
-});
+  lightbox.addEventListener('click', (event) => {
+    if (event.target === lightbox || event.target === lightboxImage || event.target === lightboxMeta || event.target === lightboxTitle) {
+      closeLightbox();
+    }
+  });
+}
 
 ['scroll', 'keydown', 'touchstart', 'mousemove'].forEach((eventName) => {
   window.addEventListener(eventName, resetIdleTimer, { passive: true });
 });
 
-animateCursor();
+if (cursor) {
+  animateCursor();
+}
 
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'ArrowLeft' && lightbox.classList.contains('is-open')) {
+  if (lightbox && event.key === 'ArrowLeft' && lightbox.classList.contains('is-open')) {
     goToGallery(-1);
     return;
   }
 
-  if (event.key === 'ArrowRight' && lightbox.classList.contains('is-open')) {
+  if (lightbox && event.key === 'ArrowRight' && lightbox.classList.contains('is-open')) {
     goToGallery(1);
     return;
   }
 
-  if (event.key === 'Escape' && lightbox.classList.contains('is-open')) {
+  if (lightbox && event.key === 'Escape' && lightbox.classList.contains('is-open')) {
     closeLightbox();
     return;
   }
 
   if (event.key === 'Escape') {
-    siteNav.classList.remove('is-open');
-    menuToggle.setAttribute('aria-expanded', 'false');
-    menuToggle.setAttribute('aria-label', 'Ouvrir le menu');
+    if (siteNav && menuToggle) {
+      siteNav.classList.remove('is-open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Ouvrir le menu');
+    }
   }
 });
 
