@@ -1,5 +1,11 @@
 const transmissions = [
   {
+    titre: "Ce que Laurent et Wong ont trouvé",
+    date: "2079-05-30",
+    type: "INFO",
+    contenu: "Ce que Laurent et Wong ont trouvé... c'est une structure cristalline bioluminescente. Elle mesure 3,2 mètres de haut. Elle émet de la lumière selon un cycle de 47 secondes. Et le signal de ce matin... il venait de là. La structure génère un champ électromagnétique faible mais mesurable. Ce n'est pas un artefact. Ce n'est pas un bug. C'est quelque chose de fondamentalement nouveau."
+  },
+  {
     titre: "Transmission Odyssey IV",
     date: "2079-05-30",
     type: "INFO",
@@ -156,6 +162,17 @@ const MISSION_LOGS = [
     status: "SURVEILLANCE",
     title: "Transmission Odyssey IV",
     detail: "CCA, Laurent et Wong en approche du secteur 7. Visibilité correcte. Sol stable. Une formation cristalline translucide a été observée à environ 200 mètres. Elle pulse faiblement de manière régulière. Images en cours d'envoi.",
+    operator: "Laurent / Wong"
+  }
+  ,
+  {
+    id: "EVT-07",
+    timestamp: "2079.05.30 // 06:12:00 UTC",
+    type: "INFO",
+    severity: "HAUTE",
+    status: "EN COURS",
+    title: "Structure cristalline bioluminescente - secteur 7",
+    detail: "Ce que Laurent et Wong ont trouvé : c'est une structure cristalline bioluminescente. Elle mesure 3,2 mètres de haut et émet de la lumière selon un cycle de 47 secondes. Le signal détecté ce matin semble provenir de là. La structure génère un champ électromagnétique faible mais mesurable. Ce n'est pas un artefact ni un bug — c'est quelque chose de fondamentalement nouveau.",
     operator: "Laurent / Wong"
   }
   

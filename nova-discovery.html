@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PROTOCOLE NOVA — Découverte scientifique majeure</title>
+  <meta name="description" content="Page autonome de documentation d'une découverte scientifique majeure en secteur 7." />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="nova-discovery.css" />
+</head>
+<body class="nova-page">
+  <a class="skip-link" href="#contenu">Aller au contenu principal</a>
+
+  <div class="site-shell">
+    <div class="ambient-orbits" aria-hidden="true"></div>
+    <div class="cursor" aria-hidden="true"><div class="cursor-ring"></div><span></span></div>
+    <div class="gallery-tooltip" id="galleryTooltip" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html#accueil" aria-label="Retour à l'accueil">
+          <img class="brand-logo" src="assets/logo_rose.png" alt="" aria-hidden="true" />
+          <div class="brand-text">
+            <strong>I Fabulosi Filette</strong>
+            <span>Mission EVT08-C · EVA Tracking</span>
+          </div>
+        </a>
+
+        <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Ouvrir le menu">
+          <span></span>
+        </button>
+
+        <nav class="nav" id="siteNav">
+          <a href="index.html">Accueil</a>
+          <a href="eva-tracking.html">EVA Tracking</a>
+          <a href="nova-discovery.html" class="is-active" aria-current="page">Protocole NOVA</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page nova-page" id="contenu">
+      <section class="hero" id="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy reveal">
+            <!-- Texte : accroche héro -->
+            <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Découverte scientifique majeure</div>
+            <!-- Texte : titre principal -->
+            <h1>PROTOCOLE NOVA — ACTIVÉ</h1>
+            <!-- Texte : sous-titre principal -->
+            <div class="hero-subtitle">Découverte scientifique majeure — Secteur 7</div>
+            <!-- Texte : paragraphe principal -->
+            <p>Lors de l'EVA conduite par Laurent et Wong, une structure de source inconnue a présenté une émission lumineuse cyclique, un champ électromagnétique faible mais mesurable, et une signature validée comme origine du signal capté.</p>
+
+            <div class="classification-row" aria-label="Données de classification">
+              <!-- Texte : badge classification -->
+              <div class="classification-badge">DONNÉES VÉRIFIÉES</div>
+              <!-- Texte : badge état -->
+              <div class="classification-badge">PHÉNOMÈNE NATUREL INEXPLIQUÉ</div>
+            </div>
+
+            <div class="hero-meta">
+              <div class="meta-card">
+                <!-- Texte : meta label -->
+                <strong>Bioluminescence</strong>
+                <!-- Texte : meta description -->
+                <span>Structure cristalline à émission lumineuse active.</span>
+              </div>
+              <div class="meta-card">
+                <!-- Texte : meta label -->
+                <strong>Hauteur</strong>
+                <!-- Texte : meta description -->
+                <span>3,2 mètres mesurés sur site.</span>
+              </div>
+              <div class="meta-card">
+                <!-- Texte : meta label -->
+                <strong>Signal</strong>
+                <!-- Texte : meta description -->
+                <span>Origine confirmée par corrélation instrumentale.</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="hero-panel reveal" aria-label="Visualisation principale">
+            <div class="hero-visual"></div>
+            <div class="glow-ring one" aria-hidden="true"></div>
+            <div class="glow-ring two" aria-hidden="true"></div>
+            <div class="glow-core" aria-hidden="true"></div>
+            <!-- Texte : étiquette haute -->
+            <div class="feature-tag top">Cycle lumineux exact: 47 secondes</div>
+            <!-- Texte : étiquette basse -->
+            <div class="feature-tag bottom">Champ électromagnétique faible mais mesurable</div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="chronologie">
+        <div class="container reveal">
+          <div class="section-header">
+            <!-- Texte : catégorie section -->
+            <div class="section-kicker">Chronologie</div>
+            <!-- Texte : titre section -->
+            <h2 class="section-title">Séquence de découverte</h2>
+            <!-- Texte : chapeau section -->
+            <p class="section-lead">Chronologie modulaire et éditable de l'observation, depuis le point d'approche jusqu'à l'activation de NOVA.</p>
+          </div>
+
+          <div class="timeline-grid" id="timelineGrid" aria-label="Chronologie de la découverte"></div>
+        </div>
+      </section>
+
+      <section class="section" id="galerie">
+        <div class="container reveal">
+          <div class="section-header">
+            <!-- Texte : catégorie section -->
+            <div class="section-kicker">Parallaxe</div>
+            <!-- Texte : titre section -->
+            <h2 class="section-title">Galerie de référence</h2>
+            <!-- Texte : chapeau section -->
+            <p class="section-lead">Les images de référence sont tintées en bleu profond avec une lecture scientifique en surimpression. Le mouvement suit le défilement pour conserver une profondeur continue.</p>
+          </div>
+
+          <div class="gallery-stage">
+            <div class="gallery-grid" id="galleryGrid" aria-label="Galerie d'images scientifiques"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="donnees">
+        <div class="container reveal">
+          <div class="section-header">
+            <!-- Texte : catégorie section -->
+            <div class="section-kicker">Mesures</div>
+            <!-- Texte : titre section -->
+            <h2 class="section-title">Données scientifiques</h2>
+            <!-- Texte : chapeau section -->
+            <p class="section-lead">Chaque statistique ci-dessous peut être modifiée directement dans l'objet JavaScript dédié. Les compteurs s'animent au passage du regard dans la fenêtre visible.</p>
+          </div>
+
+          <div class="data-wrap">
+            <div class="stats-grid" id="statsGrid" aria-label="Cartes de données"></div>
+            <article class="science-panel">
+              <!-- Texte : titre panneau -->
+              <h3 class="panel-title">Lecture validée sur site</h3>
+              <!-- Texte : texte du panneau -->
+              <p class="panel-copy">Le contexte de secteur 7 a été traité comme un événement de haute valeur scientifique. Les opérateurs ont confirmé la cohérence entre l'émission lumineuse, la signature électromagnétique et la provenance du signal.</p>
+              <ul>
+                <!-- Texte : liste point 1 -->
+                <li>Structure cristalline bioluminescente observée sans source apparente de chauffage.</li>
+                <!-- Texte : liste point 2 -->
+                <li>Cycle lumineux stable à 47 secondes exactement sur les relevés synchronisés.</li>
+                <!-- Texte : liste point 3 -->
+                <li>Protocole NOVA activé après confirmation des mesures croisées.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="question-publique">
+        <div class="container reveal">
+          <div class="section-header">
+            <!-- Texte : catégorie section -->
+            <div class="section-kicker">Mission Control</div>
+            <!-- Texte : titre section -->
+            <h2 class="section-title">Posez votre question</h2>
+            <!-- Texte : chapeau section -->
+            <p class="section-lead">Question publique, au format terminal, pour préparer les publications ultérieures sans mélanger les réponses validées et les demandes entrantes.</p>
+          </div>
+
+          <article class="question-terminal">
+            <form id="novaQuestionForm" class="question-form" novalidate>
+              <div class="question-form-grid">
+                <label class="question-field">
+                  <!-- Texte : champ prénom -->
+                  <span class="question-label">Prénom</span>
+                  <!-- Texte : placeholder prénom -->
+                  <input type="text" id="novaQuestionName" name="name" placeholder="Votre prénom (optionnel)" autocomplete="given-name" />
+                </label>
+
+                <label class="question-field question-field--full">
+                  <!-- Texte : champ question -->
+                  <span class="question-label">Question</span>
+                  <!-- Texte : placeholder question -->
+                  <textarea id="novaQuestionText" name="question" required rows="6" placeholder="Votre question sur la découverte..."></textarea>
+                </label>
+              </div>
+
+              <!-- Texte : bouton envoi -->
+              <button class="question-submit" type="submit">ENVOYER LA QUESTION</button>
+              <!-- Texte : message de confirmation -->
+              <p class="question-feedback" id="novaQuestionFeedback" aria-live="polite"></p>
+            </form>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="faq">
+        <div class="container reveal">
+          <div class="section-header">
+            <!-- Texte : catégorie section -->
+            <div class="section-kicker">FAQ</div>
+            <!-- Texte : titre section -->
+            <h2 class="section-title">Questions fréquentes</h2>
+            <!-- Texte : chapeau section -->
+            <p class="section-lead">La liste ci-dessous est entièrement alimentée par vos questions</p>
+          </div>
+
+          <div class="faq-stage" id="faqStage">
+            <div class="faq-grid" id="faqGrid" aria-label="Questions et réponses fréquentes"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="protocole">
+        <div class="container reveal">
+          <div class="section-header">
+            <!-- Texte : catégorie section -->
+            <div class="section-kicker">Statement</div>
+            <!-- Texte : titre section -->
+            <h2 class="section-title">Déclaration protocolaire NOVA</h2>
+            <!-- Texte : chapeau section -->
+            <p class="section-lead">Bloc officiel, prêt à être modifié, avec fond animé discret de particules et étoiles lentes.</p>
+          </div>
+
+          <div class="statement-stage">
+            <canvas class="statement-particles" id="particleCanvas" aria-hidden="true"></canvas>
+            <article class="statement-card">
+              <!-- Texte : titre déclaration -->
+              <h3 class="statement-title">Texte officiel</h3>
+              <!-- Texte : paragraphe déclaration -->
+              <p class="statement-copy">Les équipes Laurent &amp; Wong confirment la présence d'une structure de source inconnue présentant une émission lumineuse cyclique, un champ électromagnétique faible mais mesurable, et une signature dont l'origine a été validée par les instruments de bord. L'activation du protocole NOVA formalise la collecte, la consolidation et la diffusion des données vérifiées relatives à ce major scientific discovery en secteur 7.</p>
+
+              <div class="signature-row" aria-label="Statuts finaux">
+                <!-- Texte : badge final 1 -->
+                <div class="classification-badge">STATUT: ACTIF</div>
+                <!-- Texte : badge final 2 -->
+                <div class="classification-badge">OBSERVATION: VÉRIFIÉE</div>
+                <!-- Texte : badge final 3 -->
+                <div class="classification-badge">ORIGINE DU SIGNAL: CONFIRMÉE</div>
+              </div>
+
+              <!-- Texte : note finale -->
+              <p class="footer-note">Ce bloc reste volontairement éditable pour adaptation au protocole documentaire ou à une version de diffusion restreinte.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="container footer-inner">
+          <div>
+            <!-- Texte : pied de page -->
+            <strong>PROTOCOLE NOVA</strong>
+            <!-- Texte : sous-note pied de page -->
+            <div class="footer-note">Page autonome de découverte scientifique majeure pour secteur 7.</div>
+          </div>
+          <div class="footer-links" aria-label="Liens rapides">
+            <!-- Texte : lien accueil footer -->
+            <a href="index.html">Retour à l'accueil</a>
+            <!-- Texte : lien haut de page footer -->
+            <a href="#hero">Haut de page</a>
+          </div>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <div class="nova-modal" id="novaAdminModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="novaAdminTitle">
+    <div class="nova-modal-panel" tabindex="-1">
+      <div class="nova-modal-header">
+        <!-- Texte : titre modal admin -->
+        <h2 id="novaAdminTitle">Questions en attente</h2>
+        <!-- Texte : fermeture modal -->
+        <button class="nova-modal-close" type="button" id="novaAdminClose" aria-label="Fermer la fenêtre d'administration">×</button>
+      </div>
+
+      <div class="nova-modal-actions">
+        <!-- Texte : export CSV -->
+        <button class="nova-modal-button" type="button" id="novaExportCsv">EXPORTER CSV</button>
+        <!-- Texte : effacer tout -->
+        <button class="nova-modal-button nova-modal-button--danger" type="button" id="novaClearAll">EFFACER TOUT</button>
+      </div>
+
+      <div class="nova-modal-table-wrap">
+        <table class="nova-modal-table">
+          <thead>
+            <tr>
+              <!-- Texte : entête ID -->
+              <th>ID</th>
+              <!-- Texte : entête timestamp -->
+              <th>Timestamp</th>
+              <!-- Texte : entête prénom -->
+              <th>Prénom</th>
+              <!-- Texte : entête question -->
+              <th>Question</th>
+              <!-- Texte : entête statut -->
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody id="novaPendingQuestions"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
+  <script src="nova-discovery.js" defer></script>
+</body>
+</html>

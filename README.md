@@ -9,9 +9,11 @@ Ce dépôt contient une interface statique immersive (HTML/CSS/JS) et une nouvel
 ## Changements récents
 
 - Ajout de `eva-tracking.html` — tableau de bord EVA sombre « EVA TRACKING — LIVE ».
+- Ajout de `nova-discovery.html` — page autonome « PROTOCOLE NOVA — ACTIVÉ » pour la découverte scientifique majeure.
 - Styles EVA intégrés dans `style.css` (grilles, feed, carte secteur, galerie, readouts).
 - `script.js` rendu tolérant aux pages partielles (vérifications d'existence des éléments pour éviter les erreurs).
 - Lien de navigation ajouté dans `index.html` vers la page EVA.
+- Lien de navigation ajouté dans `index.html` vers la page NOVA.
 - Correction du décalage du header sur la page EVA via la classe `eva-page` (annule l'espace réservé au bandeau d'alerte).
 - Le minuteur de mission sur la page EVA démarre désormais depuis aujourd'hui à 11:30 (heure locale) par défaut.
 
@@ -19,6 +21,7 @@ Ce dépôt contient une interface statique immersive (HTML/CSS/JS) et une nouvel
 
 - `index.html` : page principale et barre de navigation partagée.
 - `eva-tracking.html` : nouvelle page autonome pour le suivi EVA (reprend le header et le style global).
+- `nova-discovery.html` : page autonome de découverte scientifique majeure avec CSS/JS embarqués.
 - `style.css` : styles globaux + règles EVA ajoutées.
 - `script.js` : logique partagée (galerie, feed, canvas) — désormais protégée contre l'absence d'éléments.
 - `assets/` : images et icônes utilisées par le site et la galerie EVA.
