@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+  <title>CCA Crisis Terminal</title>
+  <style>
+    :root {
+      --color-primary: #00FF88;
+      --color-secondary: #00D4FF;
+      --color-error: #FF3B3B;
+      --color-warning: #FFA500;
+      --color-muted: #4A5568;
+      --color-bg: #050810;
+      --color-panel: rgba(5, 8, 16, 0.98);
+      --font-mono: "Courier New", "Space Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--color-bg);
+      color: var(--color-primary);
+      font-family: var(--font-mono);
+    }
+
+    body {
+      font-size: 14px;
+      line-height: 1.6;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(0, 212, 255, 0.08), transparent 30%),
+        linear-gradient(180deg, rgba(0, 255, 136, 0.03), transparent 28%, rgba(0, 255, 136, 0.02));
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 4px);
+      opacity: 0.025;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.12), transparent);
+      animation: sweep 8s linear infinite;
+      opacity: 0.35;
+      z-index: 0;
+    }
+
+    @keyframes sweep {
+      from { transform: translateY(-16%); }
+      to { transform: translateY(16%); }
+    }
+
+    a { color: inherit; }
+
+    .terminal-link {
+      position: fixed;
+      top: 10px;
+      left: 14px;
+      z-index: 3;
+      font-size: 12px;
+      line-height: 1;
+      text-decoration: none;
+      color: rgba(74, 85, 104, 0.9);
+      opacity: 0.42;
+      transition: opacity 180ms ease, color 180ms ease;
+    }
+
+    .terminal-link:hover,
+    .terminal-link:focus-visible {
+      opacity: 0.9;
+      color: rgba(0, 212, 255, 0.95);
+      outline: none;
+    }
+
+    .terminal-shell {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      width: 100vw;
+      height: 100dvh;
+      padding: 26px 18px 0;
+      background: var(--color-panel);
+    }
+
+    .terminal-output {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 10px 6px 18px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 212, 255, 0.85) rgba(4, 8, 16, 0.95);
+    }
+
+    .terminal-output::-webkit-scrollbar { width: 10px; }
+    .terminal-output::-webkit-scrollbar-track { background: rgba(4, 8, 16, 0.95); }
+    .terminal-output::-webkit-scrollbar-thumb {
+      background: rgba(0, 212, 255, 0.78);
+      border-radius: 999px;
+      border: 2px solid rgba(4, 8, 16, 0.95);
+    }
+
+    .line {
+      margin: 0;
+      min-height: 1.6em;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .secondary { color: var(--color-secondary); }
+    .error { color: var(--color-error); }
+    .warning { color: var(--color-warning); }
+    .muted { color: var(--color-muted); }
+    .directory { color: var(--color-secondary); }
+    .file { color: var(--color-primary); }
+    .command-echo { color: var(--color-secondary); }
+    .status-box { color: var(--color-primary); }
+    .header { color: var(--color-secondary); }
+    .glitch { color: var(--color-error); text-shadow: 0 0 6px rgba(255, 59, 59, 0.55), -1px 0 rgba(0, 212, 255, 0.4); }
+
+    .terminal-input-bar {
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 6px calc(14px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(5, 8, 16, 0), rgba(5, 8, 16, 0.88) 28%, rgba(5, 8, 16, 0.98));
+    }
+
+    .prompt-label {
+      flex: none;
+      color: var(--color-secondary);
+      white-space: nowrap;
+    }
+
+    .command-input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--color-primary);
+      font: inherit;
+      caret-color: var(--color-primary);
+      padding: 0;
+      margin: 0;
+    }
+
+    .command-input::placeholder { color: rgba(0, 255, 136, 0.28); }
+
+    .cursor-block {
+      flex: none;
+      color: var(--color-primary);
+      animation: blink 1s steps(1, end) infinite;
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    @media (max-width: 767px) {
+      body { font-size: 12px; }
+      .terminal-shell { padding: 12px 12px 0; }
+      .terminal-link { top: 8px; left: 10px; font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="terminal-link" href="index.html">← Retour au site CCA | index.html</a>
+
+  <main class="terminal-shell" id="terminalShell" aria-label="Terminal de crise CCA">
+    <div class="terminal-output" id="terminalOutput" aria-live="polite" aria-atomic="false"></div>
+
+    <form class="terminal-input-bar" id="commandForm" autocomplete="off" spellcheck="false">
+      <span class="prompt-label" id="promptLabel">cca@crisis:~$</span>
+      <input class="command-input" id="commandInput" type="text" inputmode="text" aria-label="Commande terminal" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" disabled />
+      <span class="cursor-block" aria-hidden="true">▋</span>
+    </form>
+  </main>
+
+  <script>
+    (() => {
+      const terminalOutput = document.getElementById('terminalOutput');
+      const commandForm = document.getElementById('commandForm');
+      const commandInput = document.getElementById('commandInput');
+      const promptLabel = document.getElementById('promptLabel');
+
+      const bootTimestamp = formatTimestamp(new Date());
+      const commandHistory = [];
+      const COMMANDS = ['ls', 'cd', 'read', 'cat', 'status', 'help', 'clear', 'whoami', 'exit'];
+
+      const bootLines = [
+        '████████████████████████████████████████',
+        'CCA CRISIS TERMINAL v2.1.4',
+        'Centre de Contrôle Aurora — ACCÈS RESTREINT',
+        '████████████████████████████████████████',
+        '',
+        'Initialisation système...............OK',
+        'Chargement protocole OMEGA............OK',
+        'Vérification clearance visiteur.......OK',
+        'Connexion sécurisée établie...........OK',
+        '',
+        'NIVEAU DE CRISE ACTUEL : ⚠ MODÉRÉ',
+        '',
+        'Bienvenue, VISITEUR EXTERNE.',
+        'Vous accédez aux dossiers de crise officiels du CCA.',
+        'Toutes les informations contenues sont vérifiées et horodatées.',
+        '',
+        "Tapez 'help' pour la liste des commandes disponibles.",
+        '──────────────────────────────────────────────────',
+        'cca@crisis:~$ _'
+      ];
+
+      const helpText = buildHelpText();
+
+      const virtualFileSystem = {
+        type: 'dir',
+        children: {
+          'help.txt': { type: 'file', content: helpText },
+          'dossiers': {
+            type: 'dir',
+            children: {
+              'rumeurs': {
+                type: 'dir',
+                children: {
+                  'aurora_alien.log': {
+                    type: 'file',
+                    content: `[2025-07-14 09:12:03] RUMEUR DÉTECTÉE — #AuroraAlien
+[2025-07-14 09:45:17] Source identifiée : compte anonyme @void_signal
+[2025-07-14 11:02:44] Analyse spectrale des formations : initiée
+[2025-07-14 14:33:21] CONCLUSION : Formations cristallines d'origine géologique
+[2025-07-14 14:33:21] STATUT : ✓ DÉMENTIE OFFICIELLEMENT
+[2025-07-14 14:33:22] Voir /dossiers/preuves/analyse_cristaux.txt`
+                  },
+                  'manipulation_classement.log': {
+                    type: 'file',
+                    content: `[2025-07-15 08:00:00] RUMEUR DÉTECTÉE — Manipulation résultats classement
+[2025-07-15 10:17:33] Enquête interne ouverte — réf. AUDIT-2025-07
+[2025-07-15 16:44:09] Agent interne identifié et suspendu
+[2025-07-15 18:02:51] STATUT : ✓ CONFIRMÉE ET TRAITÉE
+[2025-07-15 18:02:51] Voir /dossiers/preuves/audit_interne.txt`
+                  },
+                  'secteur7_fuite.log': {
+                    type: 'file',
+                    content: `[2025-07-16 07:30:00] RUMEUR DÉTECTÉE — Fuite données secteur 7
+[2025-07-16 09:15:42] Vérification logs d'accès en cours...
+[2025-07-16 12:00:00] STATUT : ⚠ EN COURS DE VÉRIFICATION
+[2025-07-16 12:00:00] Mise à jour prévue dans 2h`
+                  }
+                }
+              },
+              'preuves': {
+                type: 'dir',
+                children: {
+                  'rapport_scientifique.txt': {
+                    type: 'file',
+                    content: `RAPPORT SCIENTIFIQUE OFFICIEL — CCA LAB DIVISION
+Date : 2025-07-14
+Référence : SCI-2025-047-S7
+
+Objet : Analyse spectrale formations cristallines secteur 7
+
+Les formations observées lors de l'EVA du 2025-07-13
+(astronautes Laurent & Wong) ont été soumises à une
+analyse spectroscopique complète.
+
+Résultats :
+
+- Composition : Silicates ferreux + traces de perchlorates
+
+- Origine : Activité géothermique souterraine confirmée
+
+- Âge estimé : 340 000 à 380 000 ans
+
+- Aucune signature biologique ou artificielle détectée
+
+Conclusion : Les formations sont d'origine naturelle.
+La rumeur #AuroraAlien est scientifiquement infondée.
+
+Signé : Dr. Amara Chen — Géologue en chef CCA
+Validé : Comité scientifique CCA — 3 membres`
+                  },
+                  'audit_interne.txt': {
+                    type: 'file',
+                    content: `RAPPORT AUDIT INTERNE — CONFIDENTIEL DÉCLASSIFIÉ
+Date : 2025-07-15
+Référence : AUDIT-2025-07
+
+Un agent interne de niveau 2 a modifié les données
+de classement de la mission Aurora entre le 2025-07-10
+et le 2025-07-14.
+
+Actions prises :
+[✓] Agent suspendu et mis en examen — 2025-07-15 16:44
+[✓] Données originales restaurées — 2025-07-15 17:01
+[✓] Classement officiel republié — 2025-07-15 17:30
+[✓] Procédure disciplinaire engagée
+
+Le CCA présente ses excuses aux participants affectés.
+Mesures de sécurité renforcées effective immédiatement.`
+                  },
+                  'telemetrie_eva.dat': {
+                    type: 'file',
+                    content: `TELEMETRIE EVA — SESSION 2025-07-13
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Début sortie    : 08:14:02 UTC
+Fin sortie      : 14:47:39 UTC
+Durée totale    : 6h 33min 37sec
+
+Astronaute LAURENT
+  O2 consommé   : 87.3%
+  Pression suit : NOMINALE
+  Fréq. cardiaque moy : 94 bpm
+  Déplacement total   : 2.3 km
+
+Astronaute WONG
+  O2 consommé   : 82.1%
+  Pression suit : NOMINALE
+  Fréq. cardiaque moy : 88 bpm
+  Déplacement total   : 2.1 km
+
+Statut mission  : ✓ SUCCÈS COMPLET
+Incidents       : AUCUN`
+                  },
+                  'analyse_cristaux.txt': {
+                    type: 'file',
+                    content: `ANALYSE CRISTAUX SECTEUR 7 — RÉSUMÉ PUBLIC
+Voir rapport complet : SCI-2025-047-S7
+
+Les cristaux photographiés et diffusés sur les réseaux
+sont des formations géologiques naturelles.
+
+Leur apparence lumineuse est due à la réfraction
+de la lumière sur les facettes de silicate ferrugineux.
+
+Aucun élément d'origine non naturelle n'a été détecté.`
+                  }
+                }
+              },
+              'declarations': {
+                type: 'dir',
+                children: {
+                  'laurent_wong_statement.txt': {
+                    type: 'file',
+                    content: `DÉCLARATION OFFICIELLE — ASTRONAUTES EN MISSION
+Date : 2025-07-15 | Heure : 19:00 UTC
+
+"Nous avons été témoins de formations géologiques
+absolument extraordinaires dans le secteur 7.
+Leur beauté est naturelle. Leur origine est scientifique.
+
+Nous comprenons la fascination du public, mais nous
+tenons à être clairs : il n'y a rien d'autre que
+de la science, du travail, et de la passion derrière
+notre mission.
+
+Le CCA a toute notre confiance. Les faits parlent."
+
+— Laurent & Wong, équipage Aurora
+   Depuis la station, secteur 7`
+                  },
+                  'communique_officiel.txt': {
+                    type: 'file',
+                    content: `COMMUNIQUÉ OFFICIEL DU CCA
+Date : 2025-07-15 | Ref : COM-2025-089
+
+Face à la circulation de fausses informations,
+le CCA active son protocole de transparence totale.
+
+1. La rumeur #AuroraAlien est scientifiquement infondée.
+Preuves disponibles dans /dossiers/preuves/
+
+2. La manipulation du classement est confirmée.
+Un agent interne a été identifié et suspendu.
+Les données ont été restaurées intégralement.
+
+3. L'équipage est en bonne santé et en sécurité.
+Voir télémétrie dans /dossiers/preuves/telemetrie_eva.dat
+
+Le CCA s'engage à publier chaque mise à jour ici
+en temps réel, horodatée et signée.
+
+— Direction CCA`
+                  },
+                  'msg_commandant.txt': {
+                    type: 'file',
+                    content: `MESSAGE DU COMMANDANT — USAGE INTERNE DÉCLASSIFIÉ
+Date : 2025-07-15 22:14:00
+
+À tous les membres du CCA et au public,
+
+Ce que nous vivons est un test de notre intégrité.
+Nous l'avons passé.
+
+La vérité n'a pas besoin d'être défendue.
+Elle a besoin d'être montrée.
+
+C'est ce que nous faisons.
+
+— Commandant Reyes
+  Centre de Contrôle Aurora`
+                  }
+                }
+              },
+              'faq.txt': {
+                type: 'file',
+                content: `FAQ — QUESTIONS FRÉQUENTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Q: Les cristaux du secteur 7 sont-ils d'origine extraterrestre ?
+R: Non. Analyse scientifique complète disponible dans /dossiers/preuves/
+
+Q: Le classement a-t-il vraiment été manipulé ?
+R: Oui. Un agent interne est responsable. Voir audit_interne.txt.
+
+Q: L'équipage est-il en danger ?
+R: Non. Télémétrie complète disponible. Mission un succès total.
+
+Q: Pourquoi le CCA n'a pas communiqué plus vite ?
+R: La vérification des faits prend du temps.
+   Nous préférons la vérité à la vitesse.
+
+Q: Où voir les preuves complètes ?
+R: cd dossiers/preuves puis ls pour tout lister.`
+              }
+            }
+          }
+        }
+      };
+
+      let currentPath = [];
+      let historyIndex = -1;
+      let historyDraft = '';
+      let isBusy = true;
+      let activeGlitchTimer = null;
+
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      function formatTimestamp(date) {
+        const pad = (value) => String(value).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;');
+      }
+
+      function scrollToBottom() {
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+      }
+
+      function appendLine(text = '', className = '') {
+        const line = document.createElement('div');
+        line.className = ['line', className].filter(Boolean).join(' ');
+        line.textContent = text || '\u00A0';
+        terminalOutput.appendChild(line);
+        scrollToBottom();
+        return line;
+      }
+
+      function appendHtmlLine(html, className = '') {
+        const line = document.createElement('div');
+        line.className = ['line', className].filter(Boolean).join(' ');
+        line.innerHTML = html;
+        terminalOutput.appendChild(line);
+        scrollToBottom();
+        return line;
+      }
+
+      async function typeLine(text, className = '', charDelay = 80) {
+        const line = appendLine('', className);
+        const characters = Array.from(String(text));
+        if (characters.length === 0) {
+          line.textContent = '\u00A0';
+          return line;
+        }
+        for (const character of characters) {
+          line.textContent += character;
+          scrollToBottom();
+          await sleep(charDelay);
+        }
+        return line;
+      }
+
+      async function typeBlock(text, className = '', charDelay = 14, lineDelay = 0) {
+        const lines = String(text).split('\n');
+        for (let index = 0; index < lines.length; index += 1) {
+          await typeLine(lines[index], className, charDelay);
+          if (index < lines.length - 1) {
+            await sleep(lineDelay);
+          }
+        }
+      }
+
+      function buildHelpText() {
+        return `COMMANDES DISPONIBLES
+──────────────────────
+ls              Lister le contenu du dossier
+cd [dossier]    Naviguer dans un dossier
+cd ..           Remonter d'un niveau
+read [fichier]  Lire un fichier
+cat [fichier]   Alias de read
+status          Afficher le niveau de crise
+clear           Effacer le terminal
+whoami          Qui êtes-vous ?
+exit            Retourner au site principal
+help            Afficher cette aide`;
+      }
+
+      function getPromptPath() {
+        return currentPath.length === 0 ? '~' : `~/${currentPath.join('/')}`;
+      }
+
+      function updatePrompt() {
+        promptLabel.textContent = `cca@crisis:${getPromptPath()}$`;
+      }
+
+      function setBusy(state) {
+        isBusy = state;
+        commandInput.disabled = state;
+      }
+
+      function getNodeBySegments(segments) {
+        let node = virtualFileSystem;
+        for (const segment of segments) {
+          if (!node || node.type !== 'dir') {
+            return null;
+          }
+          node = node.children?.[segment] ?? null;
+        }
+        return node;
+      }
+
+      function resolvePath(rawPath) {
+        const pathText = String(rawPath || '').trim();
+        if (pathText === '' || pathText === '.') {
+          return [...currentPath];
+        }
+        if (pathText === '~' || pathText === '/') {
+          return [];
+        }
+
+        let segments = pathText.startsWith('/') || pathText.startsWith('~') ? [] : [...currentPath];
+        let remainder = pathText;
+
+        if (remainder.startsWith('~')) {
+          remainder = remainder.slice(1);
+        }
+        if (remainder.startsWith('/')) {
+          remainder = remainder.slice(1);
+        }
+
+        for (const part of remainder.split('/')) {
+          if (!part || part === '.') {
+            continue;
+          }
+          if (part === '..') {
+            if (segments.length > 0) {
+              segments.pop();
+            }
+            continue;
+          }
+          segments.push(part);
+        }
+
+        return segments;
+      }
+
+      function listEntries(node) {
+        const children = node?.children ?? {};
+        return Object.keys(children)
+          .map((name) => ({ name, node: children[name] }))
+          .sort((left, right) => {
+            if (left.node.type !== right.node.type) {
+              return left.node.type === 'dir' ? -1 : 1;
+            }
+            return left.name.localeCompare(right.name, 'fr');
+          });
+      }
+
+      function countTotalFiles(node = virtualFileSystem) {
+        if (!node) {
+          return 0;
+        }
+        if (node.type === 'file') {
+          return 1;
+        }
+        return Object.values(node.children || {}).reduce((total, child) => total + countTotalFiles(child), 0);
+      }
+
+      function pluralize(value, singular, plural) {
+        return `${value} ${value === 1 ? singular : plural}`;
+      }
+
+      function appendCommandEcho(commandText) {
+        appendHtmlLine(`<span class="muted">${escapeHtml(promptLabel.textContent)}</span> <span class="command-text">${escapeHtml(commandText)}</span>`, 'command-echo');
+      }
+
+      function displayList() {
+        const entries = listEntries(getNodeBySegments(currentPath));
+        if (entries.length === 0) {
+          appendLine('(dossier vide)', 'muted');
+          return;
+        }
+        for (const entry of entries) {
+          appendLine(entry.node.type === 'dir' ? `${entry.name}/` : entry.name, entry.node.type === 'dir' ? 'directory' : 'file');
+        }
+        const dirs = entries.filter((entry) => entry.node.type === 'dir').length;
+        const files = entries.length - dirs;
+        appendLine('', 'muted');
+        appendLine(`${pluralize(dirs, 'dossier', 'dossiers')}, ${pluralize(files, 'fichier', 'fichiers')}`, 'muted');
+      }
+
+      function displayHelp() {
+        for (const line of helpText.split('\n')) {
+          appendLine(line, line.startsWith('COMMANDES DISPONIBLES') ? 'secondary' : 'muted');
+        }
+      }
+
+      function displayStatus() {
+        const boxWidth = 35;
+        const lines = [
+          'NIVEAU DE CRISE : ⚠ MODÉRÉ',
+          `Dernière mise à jour : ${formatTimestamp(new Date())}`,
+          'Rumeurs démenties : 2/3',
+          `Dossiers disponibles : ${countTotalFiles()}`
+        ];
+        appendLine('┌' + '─'.repeat(boxWidth) + '┐', 'status-box');
+        for (const line of lines) {
+          appendLine(`│ ${line.padEnd(boxWidth - 1, ' ')}│`, 'status-box');
+        }
+        appendLine('└' + '─'.repeat(boxWidth) + '┘', 'status-box');
+      }
+
+      async function displayFile(rawPath) {
+        const normalizedPath = String(rawPath || '').trim();
+        const node = getNodeBySegments(resolvePath(normalizedPath));
+        if (!node || node.type !== 'file') {
+          appendLine("Fichier introuvable. Utilisez 'ls' pour lister.", 'error');
+          return;
+        }
+        const filename = normalizedPath.split('/').filter(Boolean).pop() || normalizedPath;
+        appendLine(`=== Ouverture ${filename} — ${formatTimestamp(new Date())} ===`, 'header');
+        await typeBlock(filename === 'help.txt' ? helpText : node.content, 'file', 6, 0);
+      }
+
+      function displayWhoAmI() {
+        appendLine('VISITEUR EXTERNE — CLEARANCE NIVEAU OMEGA ACCORDÉE', 'secondary');
+        appendLine('Accès en lecture seule aux dossiers déclassifiés.', 'muted');
+        appendLine(`Session initiée : ${bootTimestamp}`, 'muted');
+        appendLine('Activité enregistrée.', 'muted');
+      }
+
+      function displayUnknown(command) {
+        appendLine(`Commande inconnue : '${command}'. Tapez 'help' pour l'aide.`, 'error');
+      }
+
+      function displayAlienWarning() {
+        appendLine('[ERREUR 403] — Terme non reconnu dans notre base de données.', 'error');
+        appendLine("Suggestion : essayez 'read aurora_alien.log' pour les faits.", 'warning');
+      }
+
+      function displaySudoWarning() {
+        appendLine('Vous n\'êtes pas dans le fichier sudoers.', 'warning');
+        appendLine('Cet incident sera signalé.', 'warning');
+        appendLine('...', 'warning');
+        appendLine('(non, c\'est une blague. Mais vos accès restent en lecture seule.)', 'muted');
+      }
+
+      async function displayAuroraQuote() {
+        await typeBlock('Les étoiles ne mentent pas.\nLes hommes, parfois.\nMais les cristaux... jamais.\n— Source inconnue, secteur 7', 'secondary', 65, 360);
+      }
+
+      async function runGlitchSequence(lines, duration) {
+        const glitchLine = appendLine(lines[0], 'glitch');
+        const start = Date.now();
+        if (activeGlitchTimer) {
+          clearInterval(activeGlitchTimer);
+        }
+        activeGlitchTimer = setInterval(() => {
+          const elapsed = Date.now() - start;
+          const source = lines[Math.floor((elapsed / 120) % lines.length)];
+          glitchLine.textContent = scrambleText(source);
+          scrollToBottom();
+          if (elapsed >= duration) {
+            clearInterval(activeGlitchTimer);
+            activeGlitchTimer = null;
+          }
+        }, 60);
+        await sleep(duration);
+        if (activeGlitchTimer) {
+          clearInterval(activeGlitchTimer);
+          activeGlitchTimer = null;
+        }
+        glitchLine.textContent = scrambleText(lines[lines.length - 1]);
+        scrollToBottom();
+      }
+
+      function scrambleText(text) {
+        const characters = '█▓▒░#@$%&*+~=!?<>/\\|';
+        return String(text).split('').map((character) => {
+          if (character === ' ' || Math.random() > 0.58) {
+            return character;
+          }
+          return characters[Math.floor(Math.random() * characters.length)];
+        }).join('');
+      }
+
+      async function displayHackSequence() {
+        await runGlitchSequence(['████ TENTATIVE INTRUSION ████', '██ ACCÈS NON AUTORISÉ ██', '█ CONTRE-MESURES EN COURS █'], 1000);
+        appendLine('Tentative détectée. Contre-mesures activées.', 'error');
+        appendLine('...', 'error');
+        appendLine('Vous avez regardé trop de films.', 'muted');
+        appendLine('Accès maintenu. Bonne journée.', 'secondary');
+      }
+
+      async function displaySecteur7Glitch() {
+        await runGlitchSequence(['TELEMETRIE EVA : SIGNAL INSTABLE', 'TRAME DE DONNÉES : CORROMPUE', 'RECALAGE EN COURS...'], 2000);
+        appendLine('Accès stabilisé. Les données sont intègres.', 'secondary');
+      }
+
+      async function executeCommand(rawInput) {
+        const inputText = String(rawInput || '').trim();
+        if (!inputText) {
+          return;
+        }
+
+        appendCommandEcho(inputText);
+        const [command, ...rest] = inputText.split(/\s+/);
+        const lowerCommand = command.toLowerCase();
+        const argument = rest.join(' ');
+
+        switch (lowerCommand) {
+          case 'ls':
+            displayList();
+            break;
+          case 'cd': {
+            const targetPath = argument.trim() || '~';
+            if (targetPath === '..' && currentPath.length > 0) {
+              currentPath.pop();
+              updatePrompt();
+              break;
+            }
+            const targetSegments = resolvePath(targetPath);
+            const targetNode = getNodeBySegments(targetSegments);
+            if (!targetNode || targetNode.type !== 'dir') {
+              appendLine(`bash: cd: ${targetPath}: Aucun fichier ou dossier de ce type`, 'error');
+              break;
+            }
+            currentPath = targetSegments;
+            updatePrompt();
+            break;
+          }
+          case 'read':
+          case 'cat':
+            if (!argument.trim()) {
+              appendLine("Fichier introuvable. Utilisez 'ls' pour lister.", 'error');
+              break;
+            }
+            await displayFile(argument.trim());
+            break;
+          case 'status':
+            displayStatus();
+            break;
+          case 'help':
+            displayHelp();
+            break;
+          case 'clear':
+            terminalOutput.innerHTML = '';
+            break;
+          case 'whoami':
+            displayWhoAmI();
+            break;
+          case 'exit':
+            appendLine('Déconnexion... Au revoir.', 'warning');
+            setBusy(true);
+            setTimeout(() => {
+              window.location.href = 'index.html';
+            }, 1500);
+            return;
+          case 'aurora':
+            await displayAuroraQuote();
+            break;
+          case 'secteur7':
+            await displaySecteur7Glitch();
+            break;
+          case 'alien':
+            displayAlienWarning();
+            break;
+          case 'sudo':
+            displaySudoWarning();
+            break;
+          case 'hack':
+          case 'hacker':
+            await displayHackSequence();
+            break;
+          case 'reyes':
+            appendLine('[MESSAGE PRIVÉ DÉCLASSIFIÉ — COMMANDANT REYES]', 'secondary');
+            appendLine("'Si tu lis ceci, tu as cherché.", 'muted');
+            appendLine("Les curieux sont les bienvenus ici.'", 'muted');
+            appendLine('— R.', 'secondary');
+            break;
+          default:
+            displayUnknown(command);
+            break;
+        }
+      }
+
+      function commitHistory(value) {
+        const trimmed = String(value || '').trim();
+        if (!trimmed) {
+          return;
+        }
+        if (commandHistory[commandHistory.length - 1] !== trimmed) {
+          commandHistory.push(trimmed);
+        }
+        while (commandHistory.length > 20) {
+          commandHistory.shift();
+        }
+      }
+
+      function resetHistoryNavigation() {
+        historyIndex = -1;
+        historyDraft = '';
+      }
+
+      function applyHistory(direction) {
+        if (commandHistory.length === 0) {
+          return;
+        }
+        if (historyIndex === -1) {
+          historyDraft = commandInput.value;
+          historyIndex = commandHistory.length;
+        }
+        historyIndex += direction;
+        if (historyIndex < 0) {
+          historyIndex = 0;
+        }
+        if (historyIndex >= commandHistory.length) {
+          historyIndex = commandHistory.length;
+          commandInput.value = historyDraft;
+          return;
+        }
+        commandInput.value = commandHistory[historyIndex];
+        requestAnimationFrame(() => {
+          commandInput.setSelectionRange(commandInput.value.length, commandInput.value.length);
+        });
+      }
+
+      function getAutocompleteMatches(fragment, pool) {
+        const lowerFragment = fragment.toLowerCase();
+        return pool.filter((item) => item.toLowerCase().startsWith(lowerFragment));
+      }
+
+      function commonPrefix(values) {
+        if (values.length === 0) {
+          return '';
+        }
+        let prefix = values[0];
+        for (const value of values.slice(1)) {
+          while (!value.toLowerCase().startsWith(prefix.toLowerCase()) && prefix.length > 0) {
+            prefix = prefix.slice(0, -1);
+          }
+        }
+        return prefix;
+      }
+
+      function autocompleteInput() {
+        const value = commandInput.value;
+        const cursorPosition = commandInput.selectionStart ?? value.length;
+        const beforeCursor = value.slice(0, cursorPosition);
+        const afterCursor = value.slice(commandInput.selectionEnd ?? cursorPosition);
+        const tokenStart = Math.max(beforeCursor.lastIndexOf(' '), beforeCursor.lastIndexOf('\t')) + 1;
+        const token = beforeCursor.slice(tokenStart);
+        const commandPart = beforeCursor.trimStart().split(/\s+/)[0] || '';
+        const isFirstToken = !beforeCursor.includes(' ');
+
+        let matches = [];
+        if (isFirstToken) {
+          matches = getAutocompleteMatches(token, COMMANDS);
+        } else if (['cd', 'read', 'cat'].includes(commandPart.toLowerCase())) {
+          const slashIndex = token.lastIndexOf('/');
+          const pathBase = slashIndex >= 0 ? token.slice(0, slashIndex + 1) : '';
+          const searchName = slashIndex >= 0 ? token.slice(slashIndex + 1) : token;
+          const targetSegments = resolvePath(pathBase || '.');
+          const targetNode = getNodeBySegments(targetSegments);
+          const children = targetNode?.type === 'dir' ? Object.keys(targetNode.children || {}) : [];
+          matches = getAutocompleteMatches(searchName, children).map((child) => `${pathBase}${child}`);
+          if (commandPart.toLowerCase() === 'cd') {
+            matches.unshift('..');
+          }
+        }
+
+        if (matches.length === 0) {
+          return;
+        }
+
+        const replacement = matches.length === 1 ? matches[0] : commonPrefix(matches);
+        commandInput.value = value.slice(0, tokenStart) + replacement + afterCursor;
+        const nextCaret = (value.slice(0, tokenStart) + replacement).length;
+        requestAnimationFrame(() => commandInput.setSelectionRange(nextCaret, nextCaret));
+      }
+
+      commandForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (isBusy) {
+          return;
+        }
+        const value = commandInput.value;
+        commitHistory(value);
+        resetHistoryNavigation();
+        commandInput.value = '';
+        setBusy(true);
+        await executeCommand(value);
+        if (!value.trim().toLowerCase().startsWith('exit')) {
+          setBusy(false);
+          commandInput.focus();
+        }
+        scrollToBottom();
+      });
+
+      commandInput.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          applyHistory(-1);
+          return;
+        }
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          applyHistory(1);
+          return;
+        }
+        if (event.key === 'Tab') {
+          event.preventDefault();
+          autocompleteInput();
+          return;
+        }
+        if (event.key === 'Escape') {
+          commandInput.value = '';
+          resetHistoryNavigation();
+        }
+      });
+
+      commandInput.addEventListener('input', () => {
+        resetHistoryNavigation();
+      });
+
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) {
+          return;
+        }
+        if (target.closest('a, button, input, textarea, select, label')) {
+          return;
+        }
+        commandInput.focus();
+      });
+
+      window.addEventListener('resize', scrollToBottom);
+
+      async function boot() {
+        setBusy(true);
+        updatePrompt();
+        terminalOutput.innerHTML = '';
+        for (const line of bootLines) {
+          if (line === '') {
+            appendLine('', 'muted');
+            await sleep(120);
+            continue;
+          }
+          const className = line.includes('CCA CRISIS TERMINAL') || line.includes('Centre de Contrôle Aurora') ? 'secondary' : 'muted';
+          await typeLine(line, className, 30);
+          await sleep(120);
+        }
+        setBusy(false);
+        commandInput.focus();
+      }
+
+      boot();
+    })();
+  </script>
+</body>
+</html>

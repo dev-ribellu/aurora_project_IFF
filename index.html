@@ -13,13 +13,15 @@
 </head>
 <body>
   <div class="alert-banner" id="alertBanner" aria-live="polite">
-    <div class="alert-banner-inner container">
-      <span class="alert-banner-label">
-        <span class="alert-banner-dot" aria-hidden="true"></span>
-        ⚠ SIGNAL ANORMAL DÉTECTÉ
-      </span>
-      <span class="alert-banner-copy">Surveillance active du flux de télémétrie et des communications.</span>
-    </div>
+    <a class="alert-banner-link" href="crisis-terminal.html" aria-label="Ouvrir le terminal de crise CCA">
+      <div class="alert-banner-inner container">
+        <span class="alert-banner-label">
+          <span class="alert-banner-dot" aria-hidden="true"></span>
+          ⚠ SIGNAL ANORMAL DÉTECTÉ
+        </span>
+        <span class="alert-banner-copy">Surveillance active du flux de télémétrie et des communications. Ouvrir le terminal de crise.</span>
+      </div>
+    </a>
   </div>
 
   <div class="degraded-banner" id="degradedBanner" aria-live="polite" aria-hidden="true">
@@ -120,41 +122,6 @@
             </div>
           </div>
         </aside>
-      </div>
-    </section>
-
-    <section class="section alert-section" id="derniere-alerte">
-      <div class="container scroll-reveal">
-        <div class="section-heading">
-          <h2>Dernière alerte</h2>
-          <p>État actuel du signal prioritaire. Les détails visibles dépendent du niveau de diffusion configuré dans le script.</p>
-        </div>
-
-        <article class="alert-card" id="alertCard">
-          <div class="alert-card-top">
-            <div>
-              <span class="alert-card-label">Signal status</span>
-              <h3 id="alertStatus">CONFIDENTIEL</h3>
-            </div>
-            <div class="alert-card-chip" id="alertModeChip">BLOCAGE ACTIF</div>
-          </div>
-
-          <div class="alert-card-grid">
-            <div class="alert-field">
-              <span class="alert-field-label">Timestamp</span>
-              <strong id="alertTimestamp">30/05 · 03:00 UTC</strong>
-            </div>
-            <div class="alert-field">
-              <span class="alert-field-label">Niveau de diffusion</span>
-              <strong id="alertVisibility">CONFIDENTIEL</strong>
-            </div>
-          </div>
-
-          <div class="alert-description" id="alertDescription"></div>
-          <div class="alert-full-details" id="alertFullDetails" hidden></div>
-
-          <div class="alert-placeholder">MISE À JOUR EN COURS...</div>
-        </article>
       </div>
     </section>
 

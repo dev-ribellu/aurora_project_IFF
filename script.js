@@ -174,6 +174,26 @@ const MISSION_LOGS = [
     title: "Structure cristalline bioluminescente - secteur 7",
     detail: "Ce que Laurent et Wong ont trouvé : c'est une structure cristalline bioluminescente. Elle mesure 3,2 mètres de haut et émet de la lumière selon un cycle de 47 secondes. Le signal détecté ce matin semble provenir de là. La structure génère un champ électromagnétique faible mais mesurable. Ce n'est pas un artefact ni un bug — c'est quelque chose de fondamentalement nouveau.",
     operator: "Laurent / Wong"
+  },
+  {
+    id: "EVT-10",
+    timestamp: "2079.05.30 // 19:00:00 UTC",
+    type: "INFO",
+    severity: "HAUTE",
+    status: "EN COURS",
+    title: "Manipulation et désinformation",
+    detail: "Transmission Odyssey IV : ALERTE SÉCURITÉ CCA : Une cellule de communication a été identifiée comme ayant manipulé les systèmes de scoring du Centre de Contrôle. Plus de 3 600 CM frauduleux ont été injectés dans le classement. En parallèle, le hashtag #AuroraAlien est en tendance mondiale. Un compte complotiste affirme que le CCA cache une forme de vie extraterrestre. La rumeur est reprise par plusieurs médias. La commandante Ripley réagit : CCA, on vient de voir le hashtag #AuroraAlien. C est n importe quoi. Nous avons trouvé une structure cristalline, pas des petits hommes verts. Et pour la cellule qui a triché... on est déçus. L équipage est unanime : restez factuel, restez intègre. On compte sur vous.",
+    operator: "CCA / Ripley"
+  },
+  {
+    id: "EVT-11",
+    timestamp: "2079.05.30 // 22:00:00 UTC",
+    type: "ALERTE",
+    severity: "HAUTE",
+    status: "EN COURS",
+    title: "Crise médiatique totale - familles harcelées",
+    detail: "Transmission Odyssey IV : Situation critique. #AuroraAlien repris par 4 médias TV nationaux. La mère du Dr. Silva harcelée par des journalistes à son domicile. Deepfake vidéo montrant un alien dans le vaisseau en circulation. Appels au standard CCA : +2000%. Nécessité de réponse coordonnée immédiate tous canaux.",
+    operator: "Centre de contrôle Aurora"
   }
   
 ];
