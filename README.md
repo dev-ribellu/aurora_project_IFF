@@ -1,63 +1,55 @@
 # aurora_project_IFF
 
-Site web statique pour la cellule de communication I Fabulosi Filette (IFF) du Centre de Contrôle Aurora, Mission Odyssey IV, 2079.
+Site web statique pour la cellule de communication IFF (Centre de Contrôle Aurora).
 
-## Contenu
+## Résumé
 
-- `index.html` : structure de la page, sections, navigation et liens vers les fichiers externes.
-- `style.css` : identité visuelle, responsive, barre de scroll, curseur personnalisé et animations de fond.
-- `script.js` : transmissions dynamiques, typewriter, compteur, canvas d’étoiles, menu mobile et état d’inactivité.
-- `assets/` : logos et visuels utilisés par le site.
+Ce dépôt contient une interface statique immersive (HTML/CSS/JS) et une nouvelle page de suivi EVA : `eva-tracking.html`.
 
-## Fonctionnalités
+## Changements récents
 
-- Header fixe avec navigation responsive.
-- Hero immersif avec canvas d’étoiles et texte animé.
-- Section Mission, Transmissions et À propos.
-- Curseur personnalisé en croix.
-- Barre de scroll blanche, fine, arrondie et masquée après inactivité.
-- Animations de veille avec cercles latéraux façon planètes.
+- Ajout de `eva-tracking.html` — tableau de bord EVA sombre « EVA TRACKING — LIVE ».
+- Styles EVA intégrés dans `style.css` (grilles, feed, carte secteur, galerie, readouts).
+- `script.js` rendu tolérant aux pages partielles (vérifications d'existence des éléments pour éviter les erreurs).
+- Lien de navigation ajouté dans `index.html` vers la page EVA.
+- Correction du décalage du header sur la page EVA via la classe `eva-page` (annule l'espace réservé au bandeau d'alerte).
+- Le minuteur de mission sur la page EVA démarre désormais depuis aujourd'hui à 11:30 (heure locale) par défaut.
 
-## Lancer le site
+## Arborescence importante
 
-Le projet ne nécessite aucun build ni framework.
+- `index.html` : page principale et barre de navigation partagée.
+- `eva-tracking.html` : nouvelle page autonome pour le suivi EVA (reprend le header et le style global).
+- `style.css` : styles globaux + règles EVA ajoutées.
+- `script.js` : logique partagée (galerie, feed, canvas) — désormais protégée contre l'absence d'éléments.
+- `assets/` : images et icônes utilisées par le site et la galerie EVA.
 
-1. Ouvre `index.html` dans un navigateur.
-2. Ou lance un serveur local si tu préfères éviter l’ouverture directe du fichier.
+## Lancer localement
 
-Exemple avec Python :
+Le projet ne nécessite pas de build ; ouvre `index.html` ou utilise un petit serveur local :
 
 ```bash
 python -m http.server 8000
 ```
 
-Puis ouvre `http://localhost:8000`.
+Puis visite `http://localhost:8000`.
 
-## Modifier les transmissions
+## Utiliser la page EVA
 
-Les transmissions sont définies dans le tableau `transmissions` en haut de `script.js`.
+- Depuis la navigation principale, clique sur « EVA Tracking » pour accéder au tableau de bord.
+- Le tableau affiche : statut mission (EN COURS / TERMINÉE), minuteur (départ 11:30 aujourd'hui), liste de mises à jour (les plus récentes en haut), carte secteur avec un marqueur, galerie d'images et readouts télémetriques simulés.
+- Les mises à jour sont actuellement simulées localement ; pour intégrer une source réelle, fournir une API ou un socket et j'adapterai le code.
 
-Chaque entrée suit ce format :
+## Notes pour les développeurs
 
-```js
-{
-	titre: "...",
-	date: "YYYY-MM-DD",
-	type: "ALERTE" | "INFO" | "RAPPORT",
-	contenu: "..."
-}
-```
+- Le script partagé (`script.js`) contient maintenant des gardes `if (elem) { ... }` pour éviter les erreurs sur pages qui n'ont pas tous les composants.
+- La règle CSS `.eva-page { --alert-banner-h: 0px; --degraded-banner-h: 0px; }` neutralise l'espace réservé au bandeau d'alerte uniquement pour la page EVA.
+- Le minuteur est configuré en heure locale ; pour forcer UTC, remplacer l'initialisation dans `eva-tracking.html` par un `Date.UTC(...)` explicite.
 
-Ajouter un objet dans ce tableau ajoute automatiquement une nouvelle carte dans la section Transmissions.
+## Contribuer
 
-## Logos et assets
+- Modifier une ressource locale, puis ouvrir la page dans un navigateur ou lancer un serveur local comme indiqué ci‑dessus.
+- Ouvrir une issue si tu veux : ajouter un vrai flux de télémetrie, changer l'origine du timer (UTC), ou améliorer l'accessibilité.
 
-- Logo du header : `assets/logo_rose.png`
-- Icône de page : `assets/logo_jaune.png`
-- Autres variantes disponibles dans `assets/`, dont `assets/logo_violet.png`
+## Contacts
 
-## Notes
-
-- Le site utilise uniquement du HTML, du CSS et du JavaScript vanilla.
-- Les polices proviennent de Google Fonts.
-- Le design est pensé mobile first et s’adapte aux écrans desktop.
+Pour des ajouts de données réelles (API, WebSocket), fournis les endpoints et les schémas, je ferai l'intégration.
