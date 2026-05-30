@@ -12,6 +12,16 @@
   <link rel="icon" href="assets/logo_jaune.png" />
 </head>
 <body>
+  <div class="alert-banner" id="alertBanner" aria-live="polite">
+    <div class="alert-banner-inner container">
+      <span class="alert-banner-label">
+        <span class="alert-banner-dot" aria-hidden="true"></span>
+        ⚠ SIGNAL ANORMAL DÉTECTÉ
+      </span>
+      <span class="alert-banner-copy">Surveillance active du flux de télémétrie et des communications.</span>
+    </div>
+  </div>
+
   <div class="degraded-banner" id="degradedBanner" aria-live="polite" aria-hidden="true">
     <span class="degraded-alert-icon" aria-hidden="true">⚠</span>
     <div class="degraded-status" id="degradedStatusBadge">STATUT: PERTURBÉ</div>
@@ -116,6 +126,41 @@
       </div>
     </section>
 
+    <section class="section alert-section" id="derniere-alerte">
+      <div class="container scroll-reveal">
+        <div class="section-heading">
+          <h2>Dernière alerte</h2>
+          <p>État actuel du signal prioritaire. Les détails visibles dépendent du niveau de diffusion configuré dans le script.</p>
+        </div>
+
+        <article class="alert-card" id="alertCard">
+          <div class="alert-card-top">
+            <div>
+              <span class="alert-card-label">Signal status</span>
+              <h3 id="alertStatus">CONFIDENTIEL</h3>
+            </div>
+            <div class="alert-card-chip" id="alertModeChip">BLOCAGE ACTIF</div>
+          </div>
+
+          <div class="alert-card-grid">
+            <div class="alert-field">
+              <span class="alert-field-label">Timestamp</span>
+              <strong id="alertTimestamp">30/05 · 03:00 UTC</strong>
+            </div>
+            <div class="alert-field">
+              <span class="alert-field-label">Niveau de diffusion</span>
+              <strong id="alertVisibility">CONFIDENTIEL</strong>
+            </div>
+          </div>
+
+          <div class="alert-description" id="alertDescription"></div>
+          <div class="alert-full-details" id="alertFullDetails" hidden></div>
+
+          <div class="alert-placeholder">MISE À JOUR EN COURS...</div>
+        </article>
+      </div>
+    </section>
+
     <section class="section" id="mission">
       <div class="container scroll-reveal">
         <div class="section-heading">
@@ -188,10 +233,14 @@
       <div class="container scroll-reveal">
         <div class="section-heading">
           <h2>GALERIE — Premières images de Kepler-452c</h2>
-          <p>Trois images localisées et remplaçables documentent les premiers instants visuels de la mission. Clique pour ouvrir la version plein écran.</p>
+          <p>Défilement horizontal des premiers instants visuels de la mission. Clique pour ouvrir la version plein écran.</p>
         </div>
 
-        <div class="gallery-grid" id="galleryGrid"></div>
+        <div class="gallery-slider">
+          <button class="gallery-nav gallery-prev" id="galleryPrev" type="button" aria-label="Image précédente">‹</button>
+          <div class="gallery-grid" id="galleryGrid" aria-label="Galerie d'images"></div>
+          <button class="gallery-nav gallery-next" id="galleryNext" type="button" aria-label="Image suivante">›</button>
+        </div>
       </div>
     </section>
 

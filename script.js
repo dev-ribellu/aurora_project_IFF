@@ -37,7 +37,7 @@ const transmissions = [
   }
 ];
 
-const DEGRADED_MODE = true;
+const DEGRADED_MODE = false;
 const DEGRADED_STORAGE_KEY = 'aurora.degraded';
 const BANNER_CYCLE_MESSAGES = [
   '⚠ TEMPETE SOLAIRE DETECTEE - COMMUNICATIONS DEGRADEES - SIGNAL: 23% - LATENCE: +4700ms - DONNEES CORROMPUES',
@@ -46,6 +46,24 @@ const BANNER_CYCLE_MESSAGES = [
 ];
 const RESTORED_MESSAGE = 'COMMUNICATIONS RESTAUREES - SIGNAL: 98% - NOMINAL';
 const GLITCH_CHARS = '█▓▒░╔╗╚╝║═▄▀■□▪▫◘◙';
+const STATUS = 'confidentiel';
+
+const ALERT_DATA = {
+  confidentiel: {
+    statusLabel: 'CONFIDENTIEL',
+    chipLabel: 'BLOCAGE ACTIF',
+    timestamp: '30/05 · 03:00 UTC',
+    description: 'Signal anormal détecté sur le relais de communication principal. Les détails restent masqués en attente de validation.',
+    fullDetails: 'Transmission Odyssey IV. Fenêtre de télémetrie instable, réévaluation en cours par la cellule de contrôle. Les paramètres sensibles sont temporairement redéployés en accès restreint.'
+  },
+  public: {
+    statusLabel: 'PUBLIC',
+    chipLabel: 'DIFFUSION OUVERTE',
+    timestamp: '30/05 · 03:00 UTC',
+    description: 'Signal anormal confirmé sur le relais principal avec perturbation courte mais visible des communications.',
+    fullDetails: 'Transmission Odyssey IV. Les indicateurs de latence ont brièvement dépassé les seuils de tolérance, mais le flux reste exploitable. Les équipes confirment une surveillance continue et un retour à la normale progressif.'
+  }
+};
 
 const MISSION_LOGS = [
   {
@@ -142,6 +160,8 @@ const hoverTargets = 'a, button, .card, .transmission, .member';
 const typewriterEl = document.getElementById('typewriter');
 const rootElement = document.documentElement;
 const galleryGrid = document.getElementById('galleryGrid');
+const galleryPrev = document.getElementById('galleryPrev');
+const galleryNext = document.getElementById('galleryNext');
 const lightbox = document.getElementById('lightbox');
 const lightboxImage = document.getElementById('lightboxImage');
 const lightboxTitle = document.getElementById('lightboxTitle');
@@ -155,6 +175,13 @@ const journalBody = document.getElementById('journalBody');
 const journalOutput = document.getElementById('journalOutput');
 const journalStats = document.getElementById('journalStats');
 const journalReplay = document.getElementById('journalReplay');
+const alertCard = document.getElementById('alertCard');
+const alertStatus = document.getElementById('alertStatus');
+const alertModeChip = document.getElementById('alertModeChip');
+const alertTimestamp = document.getElementById('alertTimestamp');
+const alertVisibility = document.getElementById('alertVisibility');
+const alertDescription = document.getElementById('alertDescription');
+const alertFullDetails = document.getElementById('alertFullDetails');
 const degradedBanner = document.getElementById('degradedBanner');
 const degradedStatusBadge = document.getElementById('degradedStatusBadge');
 const degradedTickerText = document.getElementById('degradedTickerText');
@@ -199,6 +226,22 @@ const galleryItems = [
     lieu: 'Site d’atterrissage Omega',
     date: '15.03.2079',
     astronaute: 'Ing. Lena Kovač'
+  },
+  {
+    src: 'assets/Visuel citation spatiale.png',
+    titre: 'Visuel citation spatiale',
+    short: 'Je sais pourquoi je suis là',
+    lieu: 'Cupola — Kepler-452c',
+    date: '30.05.2079',
+    astronaute: 'Commande visuelle IFF'
+  },
+  {
+    src: 'assets/Visuel citation spatiale_2.png',
+    titre: 'Visuel citation spatiale 2',
+    short: 'La Terre me manque',
+    lieu: 'Cupola — Kepler-452c',
+    date: '30.05.2079',
+    astronaute: 'Commande visuelle IFF'
   },
 ];
 
@@ -249,6 +292,25 @@ function wait(ms) {
 function setTickerText(text) {
   if (!degradedTickerText) return;
   degradedTickerText.textContent = `${text} // ${text} // ${text}`;
+}
+
+function renderAlertCard() {
+  if (!alertCard || !alertStatus || !alertModeChip || !alertTimestamp || !alertVisibility || !alertDescription || !alertFullDetails) {
+    return;
+  }
+
+  const mode = STATUS === 'public' ? 'public' : 'confidentiel';
+  const data = ALERT_DATA[mode];
+
+  alertCard.classList.toggle('is-public', mode === 'public');
+  alertCard.classList.toggle('is-confidentiel', mode !== 'public');
+  alertStatus.textContent = data.statusLabel;
+  alertModeChip.textContent = data.chipLabel;
+  alertTimestamp.textContent = data.timestamp;
+  alertVisibility.textContent = data.statusLabel;
+  alertDescription.textContent = data.description;
+  alertFullDetails.textContent = data.fullDetails;
+  alertFullDetails.hidden = mode !== 'public';
 }
 
 function startBannerCycle() {
@@ -610,14 +672,16 @@ function renderGallery() {
   if (!galleryGrid) return;
 
   galleryGrid.innerHTML = galleryItems.map((item, index) => `
-    <a class="gallery-card scroll-reveal" href="#" data-gallery-index="${index}" data-gallery-date="${item.date}" aria-label="Ouvrir ${item.titre}">
+    <a class="gallery-card scroll-reveal ${item.hideCaption ? 'gallery-card--no-caption' : ''}" href="#" data-gallery-index="${index}" data-gallery-date="${item.date}" aria-label="Ouvrir ${item.titre}">
       <div class="gallery-media">
         <img src="${item.src}" alt="${item.titre} — ${item.lieu}" loading="lazy" />
       </div>
+      ${item.hideCaption ? '' : `
       <div class="gallery-caption">
         <span class="gallery-short">${item.short}</span>
         <div class="gallery-mini">${item.lieu}</div>
       </div>
+      `}
     </a>
   `).join('');
 
@@ -668,6 +732,14 @@ function renderGallery() {
       galleryAttraction = null;
     });
   });
+}
+
+function scrollGallery(direction) {
+  if (!galleryGrid) return;
+  const firstCard = galleryGrid.querySelector('.gallery-card');
+  const cardWidth = firstCard ? firstCard.getBoundingClientRect().width : 320;
+  const gap = 18;
+  galleryGrid.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
 }
 
 function updateLightbox(index) {
@@ -760,6 +832,7 @@ transmissionsList.innerHTML = transmissions.map(({ titre, date, type, contenu })
   </article>
 `).join('');
 
+renderAlertCard();
 document.querySelectorAll('h1, h2').forEach((heading) => {
   heading.style.setProperty('--glitch-delay', `${(Math.random() * 3).toFixed(2)}s`);
   heading.dataset.originalText = heading.textContent;
@@ -778,6 +851,14 @@ if (journalReplay) {
   journalReplay.addEventListener('click', () => {
     playJournalLogs(true);
   });
+}
+
+if (galleryPrev) {
+  galleryPrev.addEventListener('click', () => scrollGallery(-1));
+}
+
+if (galleryNext) {
+  galleryNext.addEventListener('click', () => scrollGallery(1));
 }
 
 if (degradedModalClose) {
