@@ -77,7 +77,16 @@ const MISSION_LOGS = [
     title: "Défaillance capteur thermique module 3",
     detail: "Rien de grave, c'est un capteur redondant. Davis et moi on s'en occupe. Mais bon, 18 mois de voyage, fallait bien qu'un truc lâche un jour.",
     operator: "Cmdt. Sarah Chen"
-  }
+  },
+  {
+    id: "MESSAGE-001",
+    timestamp: "2079.03.19 // 10:58:01 UTC",
+    type: "INFO",
+    status: "RÉSOLU",
+    title: "rapport de fin de nuit",
+    detail: "Tempête solaire en décroissance, signal qui se stabilise. L'équipage va bien. Le capteur est réparé. On se prépare pour la suite : première EVA de reconnaissance sur le site Delta prévue cet après-midi. Laurent et Wong sont impatients. Bonne matinée, la Terre.",
+    operator: "Spc. N. Davis"
+  },
 ];
 
 const transmissionsList = document.getElementById('transmissionsList');
@@ -137,7 +146,7 @@ const galleryItems = [
     lieu: 'Site d’atterrissage Omega',
     date: '15.03.2079',
     astronaute: 'Ing. Lena Kovač'
-  }
+  },
 ];
 
 let idleTimer = null;
