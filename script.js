@@ -89,6 +89,17 @@ const MISSION_LOGS = [
     operator: "Spc. N. Davis"
   },
   {
+    id: "EVT-04",
+    timestamp: "2025.30.05 // 03:00",
+    type: "ALERTE",
+    severity: "HAUTE",
+    status: "EN COURS",
+    title: "Tempête solaire",
+    detail: "Transmission Odyssey IV : Tempête solaire de classe M4 détectée. Impact sur les communications dans 45 minutes. Durée estimée : 6-8 heures. Débit réduit à 10%. Protocole COM-DEGRAD activé.",
+    operator: "Équipage Odyssey IV",
+    note: "On a vu l'alerte. On passe en mode économie de bande passante. Les prochains messages seront courts. Ne vous inquiétez pas si on est silencieux."
+  },
+  {
     id: "MESSAGE-002",
     timestamp: "2079.03.21 // 18:42:13 UTC",
     type: "COMMUNICATION",
