@@ -449,9 +449,46 @@ R: cd dossiers/preuves puis ls pour tout lister.`
       let historyDraft = '';
       let isBusy = true;
       let activeGlitchTimer = null;
+      let fastForwardRequested = false;
+      let pendingSleepCancels = [];
 
       function sleep(ms) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
+        if (fastForwardRequested) {
+          return Promise.resolve();
+        }
+        return new Promise((resolve) => {
+          let settled = false;
+          const cancel = () => {
+            if (settled) {
+              return;
+            }
+            settled = true;
+            clearTimeout(timeoutId);
+            pendingSleepCancels = pendingSleepCancels.filter((entry) => entry !== cancel);
+            resolve();
+          };
+          pendingSleepCancels.push(cancel);
+          const timeoutId = setTimeout(() => {
+            if (settled) {
+              return;
+            }
+            settled = true;
+            pendingSleepCancels = pendingSleepCancels.filter((entry) => entry !== cancel);
+            resolve();
+          }, ms);
+        });
+      }
+
+      function requestFastForward() {
+        if (fastForwardRequested) {
+          return;
+        }
+        fastForwardRequested = true;
+        const cancels = pendingSleepCancels.slice();
+        pendingSleepCancels = [];
+        for (const cancel of cancels) {
+          cancel();
+        }
       }
 
       function formatTimestamp(date) {
@@ -492,12 +529,23 @@ R: cd dossiers/preuves puis ls pour tout lister.`
 
       async function typeLine(text, className = '', charDelay = 80) {
         const line = appendLine('', className);
-        const characters = Array.from(String(text));
+        const fullText = String(text);
+        if (fastForwardRequested || charDelay <= 0) {
+          line.textContent = fullText.length === 0 ? '\u00A0' : fullText;
+          scrollToBottom();
+          return line;
+        }
+        const characters = Array.from(fullText);
         if (characters.length === 0) {
           line.textContent = '\u00A0';
           return line;
         }
         for (const character of characters) {
+          if (fastForwardRequested) {
+            line.textContent = fullText;
+            scrollToBottom();
+            return line;
+          }
           line.textContent += character;
           scrollToBottom();
           await sleep(charDelay);
@@ -674,6 +722,37 @@ help            Afficher cette aide`;
         appendLine('Activité enregistrée.', 'muted');
       }
 
+      function displayWhoAmIAsciiArt() {
+        const asciiArt = `                                                                                  @@@@@@@@@@@@@@@@              
+          @@@@@@@@@@@@@@@@@@@@@@@@          
+        @@@@@@@@@@@@@@@@@@@@@@@@@@@@@       
+      @@@@@@@@@@@#+-----=*%@@@@@@@@@@@      
+    @@@@@@@@@#-=%@@@@@@@@@@@**%@@@@@@@@@    
+   @@@@@@@@=+%@@@@@@@@@@@@@@@@@@@@@@@@@@@   
+  @@@@@@@+-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  
+ @@@@@@@=*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 
+@@@@@@@+*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@#-+....+%%@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@-...........+%@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@:.............:+@@@@@@@@@@@@@@@#@@@@@@
+@@@@@@:...............:@@@@@@@@@@@@@@:@@@@@@
+@@@@@@=.................#@@@@@@@@@@@%-@@@@@@
+@@@@@@%.................:#@@@@@@@@@@=#@@@@@@
+@@@@@@@#.................=@@@@@@@@@*+@@@@@@@
+ @@@@@@@*.................#@@@@@@@*=@@@@@@@ 
+  @@@@@@@%................#@@@@@@-+@@@@@@@  
+   @@@@@@@@*:.............#@@@%+=%@@@@@@@   
+    @@@@@@@@@%+..........-%%=-#@@@@@@@@@    
+      @@@@@@@@@@@%*=::::-+#@@@@@@@@@@@      
+        @@@@@@@@@@@@@@@@@@@@@@@@@@@@        
+          @@@@@@@@@@@@@@@@@@@@@@@@          
+              @@@@@@@@@@@@@@@@              `;
+
+        for (const line of asciiArt.split('\n')) {
+          appendLine(line, 'secondary');
+        }
+      }
+
       function displayUnknown(command) {
         appendLine(`Commande inconnue : '${command}'. Tapez 'help' pour l'aide.`, 'error');
       }
@@ -792,7 +871,10 @@ help            Afficher cette aide`;
             terminalOutput.innerHTML = '';
             break;
           case 'whoami':
-            displayWhoAmI();
+            displayWhoAmIAsciiArt();
+            break;
+          case 'who_ami':
+            displayWhoAmIAsciiArt();
             break;
           case 'exit':
             appendLine('Déconnexion... Au revoir.', 'warning');
@@ -964,6 +1046,13 @@ help            Afficher cette aide`;
         }
       });
 
+      document.addEventListener('keydown', (event) => {
+        if (event.key === ' ' && isBusy) {
+          event.preventDefault();
+          requestFastForward();
+        }
+      });
+
       commandInput.addEventListener('input', () => {
         resetHistoryNavigation();
       });
@@ -988,12 +1077,12 @@ help            Afficher cette aide`;
         for (const line of bootLines) {
           if (line === '') {
             appendLine('', 'muted');
-            await sleep(120);
+            await sleep(20);
             continue;
           }
           const className = line.includes('CCA CRISIS TERMINAL') || line.includes('Centre de Contrôle Aurora') ? 'secondary' : 'muted';
-          await typeLine(line, className, 30);
-          await sleep(120);
+          await typeLine(line, className, 8);
+          await sleep(20);
         }
         setBusy(false);
         commandInput.focus();
