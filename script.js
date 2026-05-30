@@ -37,6 +37,16 @@ const transmissions = [
   }
 ];
 
+const DEGRADED_MODE = true;
+const DEGRADED_STORAGE_KEY = 'aurora.degraded';
+const BANNER_CYCLE_MESSAGES = [
+  '⚠ TEMPETE SOLAIRE DETECTEE - COMMUNICATIONS DEGRADEES - SIGNAL: 23% - LATENCE: +4700ms - DONNEES CORROMPUES',
+  'TEMPETE SOLAIRE EN COURS - SIGNAL INSTABLE - PAQUETS PERDUS: 41% - RESEAU PARTIEL',
+  'CANAL ODYSSEY IV PERTURBE - MODE COM-DEGRAD ACTIF - INTEGRITE FLUX: 23%'
+];
+const RESTORED_MESSAGE = 'COMMUNICATIONS RESTAUREES - SIGNAL: 98% - NOMINAL';
+const GLITCH_CHARS = '█▓▒░╔╗╚╝║═▄▀■□▪▫◘◙';
+
 const MISSION_LOGS = [
   {
     id: "LOG-001",
@@ -145,6 +155,15 @@ const journalBody = document.getElementById('journalBody');
 const journalOutput = document.getElementById('journalOutput');
 const journalStats = document.getElementById('journalStats');
 const journalReplay = document.getElementById('journalReplay');
+const degradedBanner = document.getElementById('degradedBanner');
+const degradedStatusBadge = document.getElementById('degradedStatusBadge');
+const degradedTickerText = document.getElementById('degradedTickerText');
+const degradedToggle = document.getElementById('degradedToggle');
+const staticFlash = document.getElementById('staticFlash');
+const restorationFlash = document.getElementById('restorationFlash');
+const degradedModal = document.getElementById('degradedModal');
+const degradedModalText = document.getElementById('degradedModalText');
+const degradedModalClose = document.getElementById('degradedModalClose');
 
 const idleDelay = 1500;
 const idleOrbits = [
@@ -193,6 +212,14 @@ let cursorActualX = cursorTargetX;
 let cursorActualY = cursorTargetY;
 let journalRunToken = 0;
 let journalHasPlayed = false;
+let degradedBannerIndex = 0;
+let degradedBannerCycleTimer = null;
+let corruptedTextTimer = null;
+let staticFlashTimer = null;
+let degradedPopupOpenTimer = null;
+let degradedPopupAutoCloseTimer = null;
+let degradedModalTypeToken = 0;
+let restoredBannerTimer = null;
 
 const TYPE_CLASS_MAP = {
   'SYSTÈME': 'log-type-systeme',
@@ -217,6 +244,220 @@ const STATUS_META = {
 
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function setTickerText(text) {
+  if (!degradedTickerText) return;
+  degradedTickerText.textContent = `${text} // ${text} // ${text}`;
+}
+
+function startBannerCycle() {
+  if (!degradedTickerText) return;
+  window.clearInterval(degradedBannerCycleTimer);
+  degradedBannerIndex = 0;
+  setTickerText(BANNER_CYCLE_MESSAGES[degradedBannerIndex]);
+  degradedBannerCycleTimer = window.setInterval(() => {
+    degradedBannerIndex = (degradedBannerIndex + 1) % BANNER_CYCLE_MESSAGES.length;
+    setTickerText(BANNER_CYCLE_MESSAGES[degradedBannerIndex]);
+  }, 3600);
+}
+
+function stopBannerCycle() {
+  window.clearInterval(degradedBannerCycleTimer);
+  degradedBannerCycleTimer = null;
+}
+
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function corruptTextElement(node) {
+  if (!node || !document.body.classList.contains('degraded')) return;
+  const source = node.dataset.originalText || node.textContent || '';
+  if (!source.trim()) return;
+
+  node.dataset.originalText = source;
+  const chars = source.split('');
+  const candidates = chars
+    .map((char, index) => ({ char, index }))
+    .filter(({ char }) => /[\wÀ-ÿ]/.test(char));
+
+  if (!candidates.length) return;
+
+  const count = Math.min(randomInt(1, 3), candidates.length);
+  for (let i = 0; i < count; i += 1) {
+    const pick = candidates[randomInt(0, candidates.length - 1)];
+    chars[pick.index] = GLITCH_CHARS[randomInt(0, GLITCH_CHARS.length - 1)];
+  }
+
+  node.textContent = chars.join('');
+  window.setTimeout(() => {
+    if (node.dataset.originalText) {
+      node.textContent = node.dataset.originalText;
+    }
+  }, 150);
+}
+
+function scheduleTextCorruption() {
+  window.clearTimeout(corruptedTextTimer);
+  if (!document.body.classList.contains('degraded')) return;
+
+  const delay = randomInt(2000, 3000);
+  corruptedTextTimer = window.setTimeout(() => {
+    const targets = Array.from(document.querySelectorAll('h1, h2, .hero-title'));
+    if (targets.length) {
+      corruptTextElement(targets[randomInt(0, targets.length - 1)]);
+    }
+    scheduleTextCorruption();
+  }, delay);
+}
+
+function triggerStaticFlash() {
+  if (!staticFlash) return;
+  staticFlash.classList.add('is-active');
+  window.setTimeout(() => {
+    staticFlash.classList.remove('is-active');
+  }, 50);
+}
+
+function scheduleStaticFlash() {
+  window.clearTimeout(staticFlashTimer);
+  if (!document.body.classList.contains('degraded')) return;
+
+  const delay = randomInt(4000, 6000);
+  staticFlashTimer = window.setTimeout(() => {
+    triggerStaticFlash();
+    scheduleStaticFlash();
+  }, delay);
+}
+
+async function typeModalLines(lines, token, speed = 24) {
+  if (!degradedModalText) return;
+  degradedModalText.textContent = '';
+  for (const line of lines) {
+    for (let i = 0; i < line.length; i += 1) {
+      if (token !== degradedModalTypeToken) return;
+      degradedModalText.textContent += line[i];
+      await wait(speed);
+    }
+    degradedModalText.textContent += '\n';
+    await wait(70);
+  }
+}
+
+function closeDegradedModal() {
+  degradedModalTypeToken += 1;
+  window.clearTimeout(degradedPopupAutoCloseTimer);
+  if (!degradedModal) return;
+  degradedModal.classList.remove('is-open');
+  degradedModal.setAttribute('aria-hidden', 'true');
+}
+
+function openDegradedModal() {
+  if (!degradedModal || !document.body.classList.contains('degraded')) return;
+  degradedModalTypeToken += 1;
+  const currentToken = degradedModalTypeToken;
+
+  degradedModal.classList.add('is-open');
+  degradedModal.setAttribute('aria-hidden', 'false');
+
+  const lines = [
+    '> ALERTE SYSTEME',
+    '> Tempete solaire classe X7 detectee',
+    '> Perturbation magnetique: 847 nT',
+    '> Integrite signal Terre-Odyssey IV: 23%',
+    '> Mode communications degrade active',
+    '> Certaines donnees peuvent etre corrompues',
+    '> [COMPRIS - FERMER]'
+  ];
+
+  typeModalLines(lines, currentToken);
+
+  window.clearTimeout(degradedPopupAutoCloseTimer);
+  degradedPopupAutoCloseTimer = window.setTimeout(() => {
+    closeDegradedModal();
+  }, 10000);
+}
+
+function scheduleDegradedPopup() {
+  window.clearTimeout(degradedPopupOpenTimer);
+  if (!document.body.classList.contains('degraded')) return;
+
+  degradedPopupOpenTimer = window.setTimeout(() => {
+    openDegradedModal();
+  }, 3000);
+}
+
+function playRestorationFlash() {
+  if (!restorationFlash) return;
+  restorationFlash.classList.add('is-active');
+  window.setTimeout(() => {
+    restorationFlash.classList.remove('is-active');
+  }, 300);
+}
+
+function showRestoredBanner() {
+  if (!degradedBanner || !degradedStatusBadge) return;
+  document.body.classList.add('show-restored-banner');
+  degradedBanner.setAttribute('aria-hidden', 'false');
+  degradedStatusBadge.textContent = 'STATUT: NOMINAL';
+  setTickerText(RESTORED_MESSAGE);
+
+  window.clearTimeout(restoredBannerTimer);
+  restoredBannerTimer = window.setTimeout(() => {
+    document.body.classList.remove('show-restored-banner');
+    degradedBanner.setAttribute('aria-hidden', 'true');
+  }, 5000);
+}
+
+function updateDegradedToggleLabel() {
+  if (!degradedToggle) return;
+  const active = document.body.classList.contains('degraded');
+  degradedToggle.textContent = active
+    ? '[↺ RESTAURER COMMUNICATIONS]'
+    : '[↺ RESTAURER COMMUNICATIONS]';
+}
+
+function setDegradedMode(enabled, options = {}) {
+  const { showPopup = true, restorationAnimation = false, restoredBanner = false } = options;
+
+  document.body.classList.toggle('degraded', enabled);
+  localStorage.setItem(DEGRADED_STORAGE_KEY, enabled ? 'true' : 'false');
+  updateDegradedToggleLabel();
+
+  if (enabled) {
+    document.body.classList.remove('show-restored-banner');
+    if (degradedBanner) degradedBanner.setAttribute('aria-hidden', 'false');
+    if (degradedStatusBadge) degradedStatusBadge.textContent = 'STATUT: PERTURBÉ';
+
+    startBannerCycle();
+    scheduleTextCorruption();
+    scheduleStaticFlash();
+    if (showPopup) {
+      scheduleDegradedPopup();
+    }
+    return;
+  }
+
+  window.clearTimeout(corruptedTextTimer);
+  window.clearTimeout(staticFlashTimer);
+  window.clearTimeout(degradedPopupOpenTimer);
+  closeDegradedModal();
+  stopBannerCycle();
+
+  if (restorationAnimation) {
+    playRestorationFlash();
+  }
+  if (restoredBanner) {
+    showRestoredBanner();
+  }
+}
+
+function getStoredDegradedMode() {
+  const stored = localStorage.getItem(DEGRADED_STORAGE_KEY);
+  if (stored === 'true') return true;
+  if (stored === 'false') return false;
+  return DEGRADED_MODE;
 }
 
 function renderJournalStats() {
@@ -515,6 +756,13 @@ transmissionsList.innerHTML = transmissions.map(({ titre, date, type, contenu })
   </article>
 `).join('');
 
+document.querySelectorAll('h1, h2').forEach((heading) => {
+  heading.style.setProperty('--glitch-delay', `${(Math.random() * 3).toFixed(2)}s`);
+  heading.dataset.originalText = heading.textContent;
+});
+
+setDegradedMode(getStoredDegradedMode(), { showPopup: true, restorationAnimation: false, restoredBanner: false });
+
 renderGallery();
 initJournalObserver();
 renderJournalStats();
@@ -525,6 +773,31 @@ window.setTimeout(() => {
 if (journalReplay) {
   journalReplay.addEventListener('click', () => {
     playJournalLogs(true);
+  });
+}
+
+if (degradedModalClose) {
+  degradedModalClose.addEventListener('click', () => {
+    closeDegradedModal();
+  });
+}
+
+if (degradedModal) {
+  degradedModal.addEventListener('click', (event) => {
+    if (event.target === degradedModal) {
+      closeDegradedModal();
+    }
+  });
+}
+
+if (degradedToggle) {
+  degradedToggle.addEventListener('click', () => {
+    const isDegraded = document.body.classList.contains('degraded');
+    setDegradedMode(!isDegraded, {
+      showPopup: !isDegraded,
+      restorationAnimation: isDegraded,
+      restoredBanner: isDegraded
+    });
   });
 }
 

@@ -12,6 +12,37 @@
   <link rel="icon" href="assets/logo_jaune.png" />
 </head>
 <body>
+  <div class="degraded-banner" id="degradedBanner" aria-live="polite" aria-hidden="true">
+    <span class="degraded-alert-icon" aria-hidden="true">⚠</span>
+    <div class="degraded-status" id="degradedStatusBadge">STATUT: PERTURBÉ</div>
+    <div class="degraded-ticker" aria-hidden="true">
+      <div class="degraded-ticker-track">
+        <span id="degradedTickerText">TEMPÊTE SOLAIRE DÉTECTÉE</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="static-flash" id="staticFlash" aria-hidden="true"></div>
+  <div class="restoration-flash" id="restorationFlash" aria-hidden="true"></div>
+
+  <div class="degraded-modal" id="degradedModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Alerte système">
+    <div class="degraded-modal-panel">
+      <pre class="degraded-modal-text" id="degradedModalText"></pre>
+      <button class="degraded-modal-close" id="degradedModalClose" type="button">[COMPRIS — FERMER]</button>
+    </div>
+  </div>
+
+  <svg class="glitch-svg-filter" width="0" height="0" aria-hidden="true" focusable="false">
+    <filter id="glitch-filter" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.013 0.08" numOctaves="1" seed="9" result="noise">
+        <animate attributeName="baseFrequency" values="0.013 0.08;0.017 0.11;0.013 0.08" dur="1.8s" repeatCount="indefinite" />
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" values="2;10;3;8;2" dur="1.6s" repeatCount="indefinite" />
+      </feDisplacementMap>
+    </filter>
+  </svg>
+
   <div class="ambient-orbits" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"><div class="cursor-ring"></div><span></span></div>
   <div class="gallery-tooltip" id="galleryTooltip" aria-hidden="true"></div>
@@ -204,6 +235,7 @@
         <strong>I Fabulosi Filette</strong>
         <p>Robin F. · Boris · Robin</p>
         <p>Centre de Contrôle Aurora — 2079 — Diffusion restreinte</p>
+        <button class="degraded-toggle" id="degradedToggle" type="button">[↺ RESTAURER COMMUNICATIONS]</button>
       </div>
       <div class="container"><div class="scanline" aria-hidden="true"></div></div>
     </footer>
