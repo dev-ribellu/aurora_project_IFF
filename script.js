@@ -204,6 +204,30 @@ const idleOrbits = [
 
 const galleryItems = [
   {
+    src: 'assets/Visuel citation spatiale_2.png',
+    titre: 'Visuel citation spatiale 2',
+    short: 'La Terre me manque',
+    lieu: 'Cupola — Kepler-452c',
+    date: '30.05.2079',
+    astronaute: 'Commande visuelle IFF'
+  },
+  {
+    src: 'assets/Visuel citation spatiale.png',
+    titre: 'Visuel citation spatiale',
+    short: 'Je sais pourquoi je suis là',
+    lieu: 'Cupola — Kepler-452c',
+    date: '30.05.2079',
+    astronaute: 'Commande visuelle IFF'
+  },
+  {
+    src: 'assets/nano3.png',
+    short: 'Le sol de l’autre monde',
+    titre: 'Le sol de l’autre monde',
+    lieu: 'Site d’atterrissage Omega',
+    date: '15.03.2079',
+    astronaute: 'Ing. Lena Kovač'
+  },
+  {
     src: 'assets/nano1.png',
     short: 'Première lumière',
     titre: 'Première lumière',
@@ -218,30 +242,6 @@ const galleryItems = [
     lieu: 'Orbite — 340 km altitude',
     date: '11.03.2079',
     astronaute: 'Dr. Yusuf Amara'
-  },
-  {
-    src: 'assets/nano3.png',
-    short: 'Le sol de l’autre monde',
-    titre: 'Le sol de l’autre monde',
-    lieu: 'Site d’atterrissage Omega',
-    date: '15.03.2079',
-    astronaute: 'Ing. Lena Kovač'
-  },
-  {
-    src: 'assets/Visuel citation spatiale.png',
-    titre: 'Visuel citation spatiale',
-    short: 'Je sais pourquoi je suis là',
-    lieu: 'Cupola — Kepler-452c',
-    date: '30.05.2079',
-    astronaute: 'Commande visuelle IFF'
-  },
-  {
-    src: 'assets/Visuel citation spatiale_2.png',
-    titre: 'Visuel citation spatiale 2',
-    short: 'La Terre me manque',
-    lieu: 'Cupola — Kepler-452c',
-    date: '30.05.2079',
-    astronaute: 'Commande visuelle IFF'
   },
 ];
 
@@ -578,7 +578,7 @@ async function playJournalLogs(forceReplay = false) {
   journalOutput.innerHTML = '';
   renderJournalStats();
 
-  for (const log of MISSION_LOGS) {
+  for (const log of [...MISSION_LOGS].reverse()) {
     if (currentRunToken !== journalRunToken) return;
 
     const entry = document.createElement('article');
