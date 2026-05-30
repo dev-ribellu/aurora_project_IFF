@@ -333,6 +333,7 @@ function scheduleStaticFlash() {
 
 async function typeModalLines(lines, token, speed = 24) {
   if (!degradedModalText) return;
+  degradedModalText.classList.add('has-caret');
   degradedModalText.textContent = '';
   for (const line of lines) {
     for (let i = 0; i < line.length; i += 1) {
@@ -349,6 +350,9 @@ function closeDegradedModal() {
   degradedModalTypeToken += 1;
   window.clearTimeout(degradedPopupAutoCloseTimer);
   if (!degradedModal) return;
+  if (degradedModalText) {
+    degradedModalText.classList.remove('has-caret');
+  }
   degradedModal.classList.remove('is-open');
   degradedModal.setAttribute('aria-hidden', 'true');
 }
