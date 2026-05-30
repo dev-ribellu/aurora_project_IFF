@@ -93,6 +93,7 @@
     const novaQuestionForm = document.getElementById("novaQuestionForm");
     const novaQuestionName = document.getElementById("novaQuestionName");
     const novaQuestionText = document.getElementById("novaQuestionText");
+    const novaQuestionSubmit = novaQuestionForm ? novaQuestionForm.querySelector(".question-submit") : null;
     const novaQuestionFeedback = document.getElementById("novaQuestionFeedback");
     const novaAdminModal = document.getElementById("novaAdminModal");
     const novaAdminPanel = novaAdminModal ? novaAdminModal.querySelector(".nova-modal-panel") : null;
@@ -100,6 +101,10 @@
     const novaExportCsv = document.getElementById("novaExportCsv");
     const novaClearAll = document.getElementById("novaClearAll");
     const novaPendingQuestions = document.getElementById("novaPendingQuestions");
+    const novaAdminConnectionState = document.getElementById("novaAdminConnectionState");
+    const novaAdminConnectionDot = document.getElementById("novaAdminConnectionDot");
+    const novaAdminConnectionText = document.getElementById("novaAdminConnectionText");
+    const novaAdminStatusMessage = document.getElementById("novaAdminStatusMessage");
     const particleCanvas = document.getElementById("particleCanvas");
     const particleContext = particleCanvas.getContext("2d");
     const novaGlowCore = document.querySelector(".glow-core");
@@ -107,6 +112,9 @@
     const novaStatementStage = document.querySelector(".statement-stage");
     const novaStatsCards = () => Array.from(document.querySelectorAll(".stat-card"));
     const NOVA_QUESTIONS_KEY = "nova_questions";
+    const NOVA_QUESTIONS_STATUT = "EN ATTENTE";
+    const APPS_SCRIPT_PLACEHOLDER = "PASTE_YOUR_WEB_APP_URL_HERE";
+    const APPS_SCRIPT_ENDPOINT = typeof APPS_SCRIPT_URL === "string" ? APPS_SCRIPT_URL : APPS_SCRIPT_PLACEHOLDER;
     const pageLoadedAt = Date.now();
     let novaPulseTimeout = null;
     let novaPulseInterval = null;
@@ -114,6 +122,8 @@
     let shootingStarInterval = null;
     let activeNovaAudioContext = null;
     let previousAdminFocus = null;
+    let adminSheetQuestions = [];
+    let adminQuestionsLoaded = false;
 
     function createCrystalImage(accent, base, deep, label) {
       const svg = `
@@ -225,6 +235,209 @@
       localStorage.setItem(NOVA_QUESTIONS_KEY, JSON.stringify(questions));
     }
 
+    // ============================================================
+    // QUESTIONS — NORMALISATION ET SYNCHRONISATION SHEET
+    // ============================================================
+    function createQuestionId() {
+      if (window.crypto && typeof window.crypto.randomUUID === "function") {
+        return window.crypto.randomUUID();
+      }
+
+      return `nova-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    // ============================================================
+    // QUESTIONS — NORMALISER UN ENREGISTREMENT BRUT
+    // ============================================================
+    function normalizeQuestionEntry(entry) {
+      if (!entry || typeof entry !== "object") {
+        return null;
+      }
+
+      const id = String(entry.id || entry.ID || "").trim();
+      const timestamp = String(entry.timestamp || entry.Timestamp || "").trim();
+      const prenom = String(entry.prenom ?? entry.name ?? entry.Prénom ?? "").trim();
+      const question = String(entry.question || entry.Question || "").trim();
+      const rawStatut = String(entry.statut || entry.status || entry.Statut || NOVA_QUESTIONS_STATUT).trim();
+      const statut = rawStatut.toUpperCase() === "PENDING" ? NOVA_QUESTIONS_STATUT : rawStatut || NOVA_QUESTIONS_STATUT;
+
+      if (!id || !question) {
+        return null;
+      }
+
+      return {
+        id,
+        timestamp,
+        prenom,
+        question,
+        statut
+      };
+    }
+
+    // ============================================================
+    // QUESTIONS — LIRE LE STOCKAGE LOCAL
+    // ============================================================
+    function getLocalQuestions() {
+      return getStoredQuestions()
+        .map(normalizeQuestionEntry)
+        .filter(Boolean);
+    }
+
+    // ============================================================
+    // QUESTIONS — ENREGISTRER LE STOCKAGE LOCAL
+    // ============================================================
+    function setLocalQuestions(questions) {
+      setStoredQuestions(questions.map((entry) => ({
+        id: entry.id,
+        timestamp: entry.timestamp,
+        prenom: entry.prenom,
+        question: entry.question,
+        statut: entry.statut || NOVA_QUESTIONS_STATUT
+      })));
+    }
+
+    // ============================================================
+    // QUESTIONS — DÉDUPLICATION ET TRI PAR DATE
+    // ============================================================
+    function mergeQuestions(sheetQuestions, localQuestions) {
+      const mergedMap = new Map();
+
+      [...sheetQuestions, ...localQuestions].forEach((entry) => {
+        const normalized = normalizeQuestionEntry(entry);
+        if (normalized) {
+          mergedMap.set(normalized.id, normalized);
+        }
+      });
+
+      return Array.from(mergedMap.values()).sort((left, right) => {
+        const leftTime = Date.parse(left.timestamp) || 0;
+        const rightTime = Date.parse(right.timestamp) || 0;
+        return rightTime - leftTime;
+      });
+    }
+
+    // ============================================================
+    // QUESTIONS — METTRE À JOUR L'ÉTAT DU MODAL ADMIN
+    // ============================================================
+    function setAdminConnectionState(state) {
+      if (!novaAdminConnectionState || !novaAdminConnectionDot || !novaAdminConnectionText) {
+        return;
+      }
+
+      const isConnected = state === "sheet";
+      novaAdminConnectionDot.style.background = isConnected ? "#3ddc84" : "#f4c542";
+      novaAdminConnectionDot.style.boxShadow = isConnected ? "0 0 0.9rem rgba(61,220,132,0.5)" : "0 0 0.9rem rgba(244,197,66,0.55)";
+      novaAdminConnectionText.textContent = isConnected ? "CONNECTÉ AU SHEET" : "MODE LOCAL";
+      novaAdminConnectionState.dataset.state = isConnected ? "sheet" : "local";
+    }
+
+    // ============================================================
+    // QUESTIONS — AFFICHER LE STATUT TERMINAL ADMIN
+    // ============================================================
+    function setAdminStatusMessage(message) {
+      if (novaAdminStatusMessage) {
+        novaAdminStatusMessage.textContent = message;
+      }
+    }
+
+    // ============================================================
+    // QUESTIONS — AFFICHER UN MESSAGE DE FEEDBACK FORMULAIRE
+    // ============================================================
+    function setQuestionFeedback(message, isError = false) {
+      if (!novaQuestionFeedback) {
+        return;
+      }
+
+      novaQuestionFeedback.textContent = message;
+      novaQuestionFeedback.dataset.state = isError ? "error" : "success";
+    }
+
+    // ============================================================
+    // QUESTIONS — CONSTRUIRE LE RENDU ADMIN À PARTIR D'UNE LISTE
+    // ============================================================
+    function renderPendingQuestions(questions = mergeQuestions(adminSheetQuestions, getLocalQuestions())) {
+      if (!novaPendingQuestions) {
+        return;
+      }
+
+      if (!questions.length) {
+        novaPendingQuestions.innerHTML = `<tr><td class="nova-empty-state" colspan="5">Aucune question en attente.</td></tr>`;
+        return;
+      }
+
+      novaPendingQuestions.innerHTML = questions.map((entry) => `
+        <tr>
+          <td>${escapeHtml(entry.id)}</td>
+          <td>${escapeHtml(entry.timestamp || "—")}</td>
+          <td>${escapeHtml(entry.prenom || "—")}</td>
+          <td>${escapeHtml(entry.question)}</td>
+          <td>${escapeHtml(entry.statut || NOVA_QUESTIONS_STATUT)}</td>
+        </tr>
+      `).join("");
+    }
+
+    // ============================================================
+    // QUESTIONS — CHARGER LES DONNÉES SHEET
+    // ============================================================
+    async function fetchSheetQuestions() {
+      if (!APPS_SCRIPT_ENDPOINT || APPS_SCRIPT_ENDPOINT === APPS_SCRIPT_PLACEHOLDER) {
+        return [];
+      }
+
+      const response = await fetch(APPS_SCRIPT_ENDPOINT, {
+        method: "GET",
+        mode: "cors"
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const payload = await response.json();
+      return Array.isArray(payload) ? payload.map(normalizeQuestionEntry).filter(Boolean) : [];
+    }
+
+    // ============================================================
+    // QUESTIONS — CHARGER LE MODAL ADMIN AVEC FALLBACK LOCAL
+    // ============================================================
+    async function loadAdminQuestions() {
+      setAdminStatusMessage("> CHARGEMENT DES DONNÉES...");
+
+      if (!APPS_SCRIPT_ENDPOINT || APPS_SCRIPT_ENDPOINT === APPS_SCRIPT_PLACEHOLDER) {
+        adminSheetQuestions = [];
+        adminQuestionsLoaded = true;
+        setAdminConnectionState("local");
+        renderPendingQuestions();
+        setAdminStatusMessage("> MODE LOCAL — Apps Script non configuré.");
+        return;
+      }
+
+      try {
+        const sheetQuestions = await fetchSheetQuestions();
+        adminSheetQuestions = sheetQuestions;
+        adminQuestionsLoaded = true;
+        setAdminConnectionState("sheet");
+        renderPendingQuestions();
+        setAdminStatusMessage("> DONNÉES CHARGÉES DEPUIS LE SHEET.");
+      } catch (error) {
+        adminSheetQuestions = [];
+        adminQuestionsLoaded = true;
+        setAdminConnectionState("local");
+        renderPendingQuestions();
+        setAdminStatusMessage("> CONNEXION SHEET IMPOSSIBLE — affichage local uniquement");
+      }
+    }
+
+    // ============================================================
+    // QUESTIONS — PERSISTER UNE QUESTION EN LOCAL
+    // ============================================================
+    function saveQuestionLocally(entry) {
+      const localQuestions = getLocalQuestions();
+      localQuestions.unshift(entry);
+      setLocalQuestions(localQuestions);
+      renderPendingQuestions();
+    }
+
     function escapeCsvCell(value) {
       return `"${String(value).replace(/"/g, '""')}"`;
     }
@@ -249,28 +462,6 @@
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-    }
-
-    function renderPendingQuestions() {
-      if (!novaPendingQuestions) {
-        return;
-      }
-
-      const questions = getStoredQuestions().filter((entry) => entry.status === "pending");
-      if (!questions.length) {
-        novaPendingQuestions.innerHTML = `<tr><td class="nova-empty-state" colspan="5">Aucune question en attente.</td></tr>`;
-        return;
-      }
-
-      novaPendingQuestions.innerHTML = questions.map((entry) => `
-        <tr>
-          <td>${escapeHtml(entry.id)}</td>
-          <td>${escapeHtml(entry.timestamp)}</td>
-          <td>${escapeHtml(entry.name || "—")}</td>
-          <td>${escapeHtml(entry.question)}</td>
-          <td>${escapeHtml(entry.status)}</td>
-        </tr>
-      `).join("");
     }
 
     function closeNovaAdminModal() {
@@ -318,13 +509,15 @@
       }
     }
 
-    function openNovaAdminModal() {
+    async function openNovaAdminModal() {
       if (!novaAdminModal) {
         return;
       }
 
       previousAdminFocus = document.activeElement;
-      renderPendingQuestions();
+      setAdminConnectionState("local");
+      setAdminStatusMessage("> CHARGEMENT DES DONNÉES...");
+      renderPendingQuestions([]);
       novaAdminModal.classList.add("is-open");
       novaAdminModal.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
@@ -333,13 +526,15 @@
       if (focusable.length) {
         focusable[0].focus();
       }
+
+      await loadAdminQuestions();
     }
 
     function exportPendingQuestionsToCsv() {
-      const questions = getStoredQuestions().filter((entry) => entry.status === "pending");
+      const questions = mergeQuestions(adminSheetQuestions, getLocalQuestions());
       const rows = [
         ["ID", "Timestamp", "Prénom", "Question", "Statut"],
-        ...questions.map((entry) => [entry.id, entry.timestamp, entry.name || "", entry.question, entry.status])
+        ...questions.map((entry) => [entry.id, entry.timestamp, entry.prenom || "", entry.question, entry.statut || NOVA_QUESTIONS_STATUT])
       ];
       downloadCsv("nova-questions-export.csv", rows);
     }
@@ -352,9 +547,10 @@
 
       localStorage.removeItem(NOVA_QUESTIONS_KEY);
       renderPendingQuestions();
+      setAdminStatusMessage("> STOCKAGE LOCAL EFFACÉ. Le Sheet n'a pas été modifié.");
     }
 
-    function submitNovaQuestion(event) {
+    async function submitNovaQuestion(event) {
       event.preventDefault();
 
       if (!novaQuestionForm || !novaQuestionText || !novaQuestionFeedback) {
@@ -369,20 +565,66 @@
         return;
       }
 
-      const questions = getStoredQuestions();
+      const prenom = novaQuestionName ? novaQuestionName.value.trim() : "";
       const entry = {
-        id: `NOVA-${String(Date.now()).slice(-8)}`,
+        id: createQuestionId(),
         timestamp: new Date().toISOString(),
-        name,
+        prenom,
         question,
-        status: "pending"
+        statut: NOVA_QUESTIONS_STATUT
       };
 
-      questions.unshift(entry);
-      setStoredQuestions(questions);
-      novaQuestionForm.reset();
-      novaQuestionFeedback.textContent = "Question reçue. Elle sera examinée avant publication.";
-      renderPendingQuestions();
+      if (novaQuestionSubmit) {
+        novaQuestionSubmit.disabled = true;
+        novaQuestionSubmit.textContent = "> TRANSMISSION EN COURS...";
+      }
+
+      setQuestionFeedback("");
+
+      if (APPS_SCRIPT_ENDPOINT === APPS_SCRIPT_PLACEHOLDER) {
+        console.warn("NOVA: Apps Script URL not configured — fallback to localStorage");
+        saveQuestionLocally(entry);
+        novaQuestionForm.reset();
+        setQuestionFeedback("> QUESTION TRANSMISE — EN ATTENTE DE VALIDATION.");
+        if (novaQuestionSubmit) {
+          novaQuestionSubmit.disabled = false;
+          novaQuestionSubmit.textContent = "ENVOYER LA QUESTION";
+        }
+        return;
+      }
+
+      const payload = {
+        id: entry.id,
+        timestamp: entry.timestamp,
+        prenom: entry.prenom,
+        question: entry.question,
+        statut: entry.statut
+      };
+
+      try {
+        await fetch(APPS_SCRIPT_ENDPOINT, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        saveQuestionLocally(entry);
+        adminSheetQuestions = mergeQuestions(adminSheetQuestions, [entry]);
+        novaQuestionForm.reset();
+        setQuestionFeedback("> QUESTION TRANSMISE — EN ATTENTE DE VALIDATION.");
+      } catch (error) {
+        saveQuestionLocally(entry);
+        novaQuestionForm.reset();
+        setQuestionFeedback("> ERREUR TRANSMISSION — Réessayez ou contactez le centre de contrôle.", true);
+      } finally {
+        if (novaQuestionSubmit) {
+          novaQuestionSubmit.disabled = false;
+          novaQuestionSubmit.textContent = "ENVOYER LA QUESTION";
+        }
+      }
     }
 
     function wireFaq() {

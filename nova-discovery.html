@@ -270,6 +270,12 @@
       <div class="nova-modal-header">
         <!-- Texte : titre modal admin -->
         <h2 id="novaAdminTitle">Questions en attente</h2>
+        <!-- Texte : indicateur de connexion -->
+        <div id="novaAdminConnectionState" style="display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;white-space:nowrap;">
+          <span id="novaAdminConnectionDot" aria-hidden="true" style="width:0.65rem;height:0.65rem;border-radius:999px;background:#f4c542;box-shadow:0 0 0.9rem rgba(244,197,66,0.55);"></span>
+          <!-- Texte : état de connexion -->
+          <span id="novaAdminConnectionText">MODE LOCAL</span>
+        </div>
         <!-- Texte : fermeture modal -->
         <button class="nova-modal-close" type="button" id="novaAdminClose" aria-label="Fermer la fenêtre d'administration">×</button>
       </div>
@@ -280,6 +286,12 @@
         <!-- Texte : effacer tout -->
         <button class="nova-modal-button nova-modal-button--danger" type="button" id="novaClearAll">EFFACER TOUT</button>
       </div>
+
+      <!-- Texte : note stockage local -->
+      <p style="margin:0 0 1rem;font-size:0.82rem;opacity:0.82;">* Efface uniquement le stockage local</p>
+
+      <!-- Texte : statut de chargement -->
+      <p id="novaAdminStatusMessage" aria-live="polite" style="margin:0 0 1rem;font-family:monospace;font-size:0.88rem;letter-spacing:0.04em;"></p>
 
       <div class="nova-modal-table-wrap">
         <table class="nova-modal-table">
@@ -303,6 +315,9 @@
     </div>
   </div>
 
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbweo4oRq55Q6UntB2Qml9b4C98kClQRGbmMBt4ZNT_Ftws_AUnu8IwAr8UpkzDJAdBfRQ/exec";
+  </script>
   <script src="script.js" defer></script>
   <script src="nova-discovery.js" defer></script>
 </body>
