@@ -82,15 +82,26 @@ const MISSION_LOGS = [
     id: "MESSAGE-001",
     timestamp: "2079.03.19 // 10:58:01 UTC",
     type: "INFO",
-    severity: "MOYENNE",
+    severity: "FAIBLE",
     status: "RÉSOLU",
     title: "rapport de fin de nuit",
     detail: "Tempête solaire en décroissance, signal qui se stabilise. L'équipage va bien. Le capteur est réparé. On se prépare pour la suite : première EVA de reconnaissance sur le site Delta prévue cet après-midi. Laurent et Wong sont impatients. Bonne matinée, la Terre.",
     operator: "Spc. N. Davis"
   },
   {
+    id: "EVT-01",
+    timestamp: "2079.05.29 // 19:31",
+    type: "INFO",
+    severity: "MOYENNE",
+    status: "RÉSOLU",
+    title: "Premier contact visuel",
+    detail: "Transmission Odyssey IV : CCA, ici Laurent. On vient de terminer le premier survol basse altitude de la zone Alpha. Les images arrivent. C'est... c'est vraiment autre chose de le voir de près. La vallée d'Aurelia est immense. On distingue ce qui ressemble à des formations rocheuses stratifiées. Patel est comme un gosse devant un sapin de Noël.",
+    operator: "Laurent",
+    note: "Progression mission : 2/3"
+  },
+  {
     id: "EVT-04",
-    timestamp: "2025.30.05 // 03:00",
+    timestamp: "2079.05.30 // 03:00",
     type: "ALERTE",
     severity: "HAUTE",
     status: "EN COURS",
@@ -107,8 +118,8 @@ const MISSION_LOGS = [
     status: "SURVEILLANCE",
     title: "message personnel diffusé au public",
     detail: "Maman, Papa... Je sais que vous recevrez ça dans 20 minutes. Aujourd'hui ça fait exactement 2 ans que je suis partie de la maison. Je voulais juste vous dire... la Terre me manque. Vous me manquez. Mais quand je regarde par le hublot et que je vois cette planète qu'aucun humain n'a jamais vue de si près... je sais pourquoi je suis là. Je vous aime.",
-    operator: "Cmdt. Sarah Chen"
-    
+    operator: "Cmdt. Sarah Chen",
+    note: "Ce message a fuité sur les réseaux sociaux. Réaction publique très positive. Forte émotion. Opportunité de communication émotionnelle autour de l'aspect humain de la mission."
   },
 ];
 
