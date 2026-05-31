@@ -1,117 +1,161 @@
-# aurora_project_IFF — Documentation complète
+# aurora_project_IFF
 
-Site web statique pour la cellule de communication IFF (Centre de Contrôle Aurora). Ce dépôt contient le site principal et une nouvelle page d'archive immersive créée pour consolider les livrables, les transmissions et les assets de la mission AURORA.
+Site web statique pour la cellule de communication IFF du Centre de Contrôle Aurora. Le projet présente l’univers AURORA de bout en bout : la mission, les livrables, les transmissions, la galerie visuelle, les capsules vidéo et les scores de production.
 
-## Résumé rapide
+## Mise en avant du site
 
-La principale nouveauté ajoutée : une page d'archive complète et autonome qui regroupe les productions, la timeline interactive, la galerie, un player vidéo capsule et un tableau de scores.
+Le site est pensé comme une archive immersive et narrative. Il ne se contente pas d’afficher des pages : il raconte une mission entière, du premier contact visuel jusqu’au retour final du signal.
 
-Principaux fichiers créés/modifiés :
+Voici ce que l’on retrouve dans l’ensemble du dispositif :
 
-- Page archive : [archive.html](archive.html)
-- Styles dédiés : [css/archive.css](css/archive.css)
-- Logique JS de l'archive : [js/archive.js](js/archive.js)
-- Assets principaux : `assets/aurora_iff_rendu/aurora_iff/` (voir liste ci‑dessous)
+- un site principal cohérent avec une direction artistique SF sobre et lisible ;
+- une archive officielle complète qui regroupe les productions, la timeline, les transmissions et la galerie ;
+- des pages dédiées à des moments clés de la mission, comme le suivi EVA, la découverte NOVA et le terminal de crise ;
+- une logique de navigation et de scoring qui rend l’ensemble vivant et crédible ;
+- des visuels et vidéos intégrés directement depuis les livrables du dossier AURORA.
 
-## Fonctionnalités de l'archive
+## Ce que contient le dépôt
 
-- Loader d'initialisation et barres de progression.
-- Navigation fixe et structure responsive.
-- Hero avec compteur de scores et statut de mission.
-- Timeline interactive : filtres, cartes extensibles, badges de mission avec liens vers livrables.
-- Productions : résumé des pages livrées et accès direct.
-- Transmissions (feed) : affichage filtrable des événements.
-- Galerie : miniatures paresseuses, visionneuse/lightbox personnalisée.
-- Lightbox : lecture d'images et intégration de vidéos YouTube (injection/suppression d'iframe pour stopper la lecture).
-- Capsule vidéo : trois slots, le short DCP intégré en embed et synchronisé avec la galerie.
-- Canvas « starfield » et curseur personnalisé pour l'ambiance.
-- Calcul automatique des scores (CM) via les tableaux `MISSIONS_SOCLE` et `TIMELINE_EVENTS`.
+### Pages principales
+
+- [index.html](index.html) : page d’accueil du projet AURORA.
+- [archive.html](archive.html) : archive officielle et page la plus complète du dispositif.
+- [eva-tracking.html](eva-tracking.html) : page de suivi EVA.
+- [nova-discovery.html](nova-discovery.html) : page dédiée à la découverte NOVA.
+- [signal.html](signal.html) : page d’alerte / signal anormal.
+- [crisis-terminal.html](crisis-terminal.html) : interface de crise et mode dégradé.
+
+### Styles et scripts
+
+- [style.css](style.css) : styles globaux du site principal.
+- [script.js](script.js) : logique du site principal.
+- [css/archive.css](css/archive.css) : styles spécifiques de l’archive.
+- [js/archive.js](js/archive.js) : logique complète de l’archive.
+
+### Assets
+
+- `assets/` : visuels génériques, logos et éléments utilisés sur plusieurs pages.
+- `assets/aurora_iff_rendu/aurora_iff/` : livrables officiels, visuels, PDFs, vidéos, sons et sous-dossiers thématiques.
+- `assets/aurora_iff_rendu/aurora_iff/EVT_B_15/` : série visuelle EVTB-15 ajoutée à la galerie.
+
+## L’archive AURORA, de A à Z
+
+La page [archive.html](archive.html) est organisée comme un vrai dossier de mission.
+
+### 1. Introduction
+
+- loader d’arrivée et ambiance visuelle d’ouverture ;
+- hero avec statut de mission, compteurs et résumé du contexte ;
+- identité graphique inspirée du reste du site.
+
+### 2. Contexte mission
+
+- synopsis global de la mission Odyssey IV ;
+- présentation de l’équipage ;
+- paramètres de mission synthétiques.
+
+### 3. Timeline interactive
+
+- événements ordonnés chronologiquement ;
+- filtres par phase narrative ;
+- cartes ouvrables avec transmissions et badges de missions ;
+- liens directs vers les productions ou sous-pages correspondantes.
+
+### 4. Productions livrées
+
+- récapitulatif des pages déjà produites ;
+- accès rapide au site principal, à la découverte NOVA, au signal, au terminal de crise et au suivi EVA.
+
+### 5. Flux de transmissions
+
+- journal condensé des messages de l’équipage ;
+- classement par tonalité et par état de crise ;
+- lecture plus rapide des moments clés de la mission.
+
+### 6. Galerie d’archive
+
+- miniatures paresseuses ;
+- visionneuse personnalisée ;
+- ajout des nouveaux visuels EVTB-15 ;
+- intégration d’un short YouTube en galerie ;
+- suppression des anciennes entrées visuelles 04 à 07 à la demande.
+
+### 7. Capsules vidéo
+
+- capsules vidéo intégrées directement dans la page ;
+- short DCP affiché dans la capsule ;
+- remplacement du placeholder final par la vidéo YouTube fournie.
+
+### 8. Scores
+
+- calcul automatique des CM ;
+- progression des missions ;
+- répartition des scores par catégorie.
 
 ## Données embarquées
 
-Les tableaux principaux sont définis dans `js/archive.js` :
+Les données de l’archive sont hardcodées dans [js/archive.js](js/archive.js) pour garder une version stable, lisible et autonome.
 
-- `MISSIONS_SOCLE` : socles de base (charte, kit réseaux, identité, etc.).
-- `TIMELINE_EVENTS` : événements (EVT-01 → EVT-13, EVT-CONTACT) avec leurs missions imbriquées.
-- `EXISTING_PAGES` : pages du site référencées dans la section Productions.
-- `GALLERY_ITEMS` : items présentés dans la galerie (images + miniatures + éléments vidéo).
+- `MISSIONS_SOCLE` : socles de base.
+- `TIMELINE_EVENTS` : événements de la mission et missions associées.
+- `EXISTING_PAGES` : pages du site déjà livrées.
+- `GALLERY_ITEMS` : éléments affichés dans la galerie, images et vidéos comprises.
 
-Les données sont actuellement hardcodées pour garantir une archive stable hors connexion.
+Le calcul des CM est automatique via les missions marquées comme terminées.
 
-## Assets importants
+## État des ajouts récents
 
-Les livrables et visuels sont stockés sous `assets/aurora_iff_rendu/aurora_iff/` — exemples :
+- archive complète créée et intégrée.
+- ajout des visuels EVTB-15 dans la galerie.
+- ajout du short DCP en capsule et en galerie avec lightbox vidéo.
+- remplacement du placeholder de capsule par la vidéo YouTube fournie.
+- amélioration de la lightbox pour supporter les vidéos YouTube.
+- correction d’un souci de syntaxe JS et d’un overflow mobile.
+- mise à jour du README pour présenter l’ensemble du projet.
 
-- `Message_Terre_Livrables/` (contact audio, objet.png, explication.txt)
-- `EVT_B_15/` (série visuelle EVTB-15 ajoutée)
-- `Visuels anti-désinformation/`, `Visuel citation spatiale/`, `Séquence émotion.mp4`, `Transmission dégradée.mp4`, etc.
+## Lancer le projet
 
-Note : les images EVTB-15 ont été ajoutées à la galerie et sont référencées dans `js/archive.js`.
+Le projet ne nécessite aucun build.
 
-## Changements récents (résumé)
+```bash
+python -m http.server 8000
+```
 
-- Ajout complet de l'archive : [archive.html](archive.html), [css/archive.css](css/archive.css), [js/archive.js](js/archive.js).
-- Intégration des visuels `EVT_B_15/*` dans la galerie.
-- Suppression des entrées « Archive visuelle 04 → 07 » de la galerie à la demande.
-- Ajout d'un YouTube Short (ID `E4nhrnWL_sk`) : intégré en embed dans la section capsule et ajouté comme item vidéo dans la galerie avec lightbox.
-- Lightbox étendu pour supporter la lecture de vidéos YouTube (injection d'iframe + autoplay paramètre).
-- Corrections : fix syntaxique JS précédemment détecté, correction d'overflow mobile (suppression d'un transform scale problématique dans la CSS).
+Puis ouvrir :
 
-## Vérifications et commandes utiles
+```text
+http://localhost:8000/index.html
+http://localhost:8000/archive.html
+```
 
-- Vérifier la syntaxe du script de l'archive :
+## Vérifications utiles
+
+- Vérifier la syntaxe JavaScript de l’archive :
 
 ```bash
 node --check js/archive.js
 ```
 
-- Lancer un serveur local et ouvrir la page d'archive :
+- Vérifier les fichiers EVTB-15 présents :
 
 ```bash
-python -m http.server 8000
-# puis ouvrir http://localhost:8000/archive.html
+dir assets\aurora_iff_rendu\aurora_iff\EVT_B_15
 ```
 
-- Rechercher les assets EVTB-15 :
+- Tester visuellement la galerie et la capsule dans le navigateur.
 
-```bash
-ls assets/aurora_iff_rendu/aurora_iff/EVT_B_15
-```
+## Notes techniques
 
-## Tests rapides manuels
+- Les chemins d’assets sont encodés dans [js/archive.js](js/archive.js) avec une fonction dédiée.
+- La lightbox gère à la fois les images et les vidéos YouTube.
+- La galerie et la timeline sont construites à partir des tableaux de données internes.
+- Le site a été ajusté pour rester lisible sur desktop et mobile.
 
-- Ouvrir [archive.html](archive.html) et vérifier :
-	- Timeline : expansion des cartes, liens des badges ouvrent les fichiers locaux.
-	- Galerie : miniatures, lightbox image; l'item « Short DCP » ouvre un lecteur vidéo et la lecture s'arrête en fermant la lightbox.
-	- Capsule : la section contient maintenant le short incrusté ainsi que les autres vidéos.
+## Crédits et remerciements
 
-## Notes pour les développeurs
+Merci aux organisateurs pour le cadre, les livrables et le travail de coordination qui ont rendu ce projet possible.
 
-- Si vous déplacez des fichiers d'`assets/`, mettez à jour les chemins codés dans `js/archive.js` (fonctions `assetPath()` et `GALLERY_ITEMS`).
-- Pour ajouter un nouveau visuel à la galerie, ajouter un objet suivant la forme existante dans `GALLERY_ITEMS` :
-
-```js
-{
-	src: "assets/.../image.jpg",
-	title: "Titre",
-	meta: "Meta info",
-	// optionnel pour vidéo :
-	type: "video",
-	video: "https://www.youtube.com/embed/<ID>"
-}
-```
-
-- Pour forcer l'autoplay muet des vidéos dans la lightbox, modifier la génération de l'iframe en ajoutant `&mute=1` ou en définissant l'attribut `muted` côté player si nécessaire.
-
-## TODO / pistes d'amélioration
-
-- Valider l'intégrité complète des liens (tâche en cours).
-- Tests cross‑device automatisés (headless browser) pour garantir qu'il n'y a pas d'overflow sur toutes tailles d'écran.
-- Ajouter un indicateur « dossier » pour les missions dont le lien pointe vers un répertoire plutôt qu'un fichier.
-
-## Contact / prochaines étapes
-
-Si tu veux que j'active l'autoplay muet pour les shorts, que je mette en avant un item dans la galerie, ou que j'intègre d'autres visuels, dis‑moi et je ferai les modifications.
+Un remerciement tout particulier à Romain Delon pour son accompagnement, son implication et la qualité du suivi.
 
 ---
-Dernière mise à jour : 31/05/2026 — archive enrichie, EVTB-15 et Short DCP intégrés.
+Dernière mise à jour : 31/05/2026
