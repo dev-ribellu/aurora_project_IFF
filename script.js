@@ -194,6 +194,16 @@ const MISSION_LOGS = [
     title: "Crise médiatique totale - familles harcelées",
     detail: "Transmission Odyssey IV : Situation critique. #AuroraAlien repris par 4 médias TV nationaux. La mère du Dr. Silva harcelée par des journalistes à son domicile. Deepfake vidéo montrant un alien dans le vaisseau en circulation. Appels au standard CCA : +2000%. Nécessité de réponse coordonnée immédiate tous canaux.",
     operator: "Centre de contrôle Aurora"
+  },
+  {
+    id: "EVT-12",
+    timestamp: "2079.05.30 // 22:30:00 UTC",
+    type: "COMMUNICATION",
+    severity: "FAIBLE",
+    status: "RÉSOLU",
+    title: "Transmission Odyssey IV",
+    detail: "Transmission Odyssey IV : Les familles ont été rassurées. Ma mère m'a envoyé un message, elle va bien. Merci pour votre réactivité. Ça nous a secoués, cette histoire de deepfake. Ça rappelle qu'on est loin... et qu'on compte sur vous là-bas. Restez vigilants.",
+    operator: "Équipage Odyssey IV"
   }
   
 ];

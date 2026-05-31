@@ -1,0 +1,41 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background: #000000;
+  overflow: hidden;
+  cursor: none;
+}
+
+#signal-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+
+#contact-text {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ffffff;
+  font-family: monospace;
+  font-size: 1.5rem;
+  letter-spacing: 0.3em;
+  opacity: 0;
+  transition: opacity 2s ease;
+  pointer-events: none;
+  z-index: 10;
+}
