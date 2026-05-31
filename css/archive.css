@@ -1146,6 +1146,15 @@ h1 {
   gap: 14px;
 }
 
+.score-note {
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .score-card {
   padding: 20px;
 }

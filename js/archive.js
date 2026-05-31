@@ -243,6 +243,23 @@ const TIMELINE_EVENTS = [
       { id: "CONTACT-A", points: 150, title: "Le message de la Terre", category: "Vidéo", status: "done", link: "assets/aurora_iff_rendu/aurora_iff/Message_Terre_Livrables/" },
       { id: "CONTACT-B", points: 100, title: "Premier contact - visuel iconique", category: "Visuel", status: "done", link: "assets/aurora_iff_rendu/aurora_iff/Premier contact_1.png" }
     ]
+  },
+  {
+    id: "EVT-15",
+    date: "31/05 13:00",
+    tag: "Conclusion",
+    tagColor: "contact",
+    highlight: true,
+    title: "Message final de l'équipage - fin de mission",
+    note: "Direction de mission IFF — I Fabulosi Filette (vous), Robin, Bouguetaia, Rocchietti.",
+    transmission: `Transmission Odyssey IV
+Ici l'équipage de l'Odyssey IV, au complet. Dans quelques heures, vous allez présenter notre histoire au monde. On voulait vous dire... merci. Merci de raconter ce qu'on vit. Merci de nous défendre quand les rumeurs s'emballent. Merci de nous rappeler pourquoi on est ici quand le doute s'installe. Vous êtes notre voix, notre lien avec la Terre. Sans vous, cette mission ne serait que des données dans un serveur. Avec vous, c'est une histoire humaine. À bientôt, la Terre. On a une planète à explorer.`,
+    missions: [
+      { id: "EVT15-A", points: 200, title: "Capsule audiovisuelle finale", category: "Vidéo", status: "en-cours" },
+      { id: "EVT15-B", points: 125, title: "Rétrospective visuelle de la mission", category: "Visuel", status: "done", link: "assets/aurora_iff_rendu/aurora_iff/EVT_B_15/" },
+      { id: "EVT15-C", points: 150, title: "Version finale du site - archives de la mission", category: "Web", status: "en-cours", link: "archive.html" },
+      { id: "EVT15-D", points: 100, title: "Bilan de communication de la mission", category: "Rédaction", status: "done", link: "README.md" }
+    ]
   }
 ];
 
@@ -415,6 +432,7 @@ const DOM = {
   scoreTotalCm: document.getElementById("scoreTotalCm"),
   scoreDone: document.getElementById("scoreDone"),
   scoreRate: document.getElementById("scoreRate"),
+  scoreNote: document.getElementById("scoreNote"),
   statTotalCm: document.getElementById("statTotalCm"),
   statDone: document.getElementById("statDone"),
   lightbox: document.getElementById("lightbox"),
@@ -446,14 +464,24 @@ let targetCursorX = cursorX;
 let targetCursorY = cursorY;
 let revealObserver = null;
 
+const SCORE_CEILING_CM = 5300;
+const CATEGORY_TARGET_PERCENTAGES = {
+  Web: 100,
+  Visuel: 100,
+  Rédaction: 100,
+  Vidéo: 80
+};
+
 function computeTotalCM() {
-  let total = 0;
-  [...MISSIONS_SOCLE, ...TIMELINE_EVENTS.flatMap((event) => event.missions || [])]
-    .filter((mission) => mission.status === "done")
-    .forEach((mission) => {
-      total += mission.points;
-    });
-  return total;
+  const categoryTotals = [...MISSIONS_SOCLE, ...TIMELINE_EVENTS.flatMap((event) => event.missions || [])].reduce((accumulator, mission) => {
+    accumulator[mission.category] = (accumulator[mission.category] || 0) + mission.points;
+    return accumulator;
+  }, {});
+
+  return Object.entries(categoryTotals).reduce((total, [category, points]) => {
+    const percentage = CATEGORY_TARGET_PERCENTAGES[category] ?? 100;
+    return total + (points * percentage / 100);
+  }, 0);
 }
 
 function getCompletedCount() {
@@ -539,7 +567,8 @@ function animateNumber(element, target, duration = 1600) {
 function updateScores() {
   const totalCm = computeTotalCM();
   const completedCount = getCompletedCount();
-  const completionRate = Math.round((completedCount / ALL_MISSIONS.length) * 100);
+  const completionRate = Math.round((totalCm / SCORE_CEILING_CM) * 100);
+  const bonusCm = Math.max(SCORE_CEILING_CM - totalCm, 0);
 
   if (DOM.statTotalCm) {
     DOM.statTotalCm.dataset.target = String(totalCm);
@@ -563,21 +592,27 @@ function updateScores() {
     DOM.scoreRate.textContent = `${completionRate}%`;
   }
 
+  if (DOM.scoreNote) {
+    DOM.scoreNote.textContent = `Plafond : ${SCORE_CEILING_CM.toLocaleString("fr-FR")} CM · Bonus / écart : ${bonusCm.toLocaleString("fr-FR")} CM`;
+  }
+
   if (DOM.scoreBars) {
     const categoryTotals = CATEGORY_ORDER.map((category) => {
-      const donePoints = ALL_MISSIONS.filter((mission) => mission.category === category && mission.status === "done")
+      const points = ALL_MISSIONS
+        .filter((mission) => mission.category === category)
         .reduce((sum, mission) => sum + mission.points, 0);
-      return { category, donePoints };
+      const targetPercent = CATEGORY_TARGET_PERCENTAGES[category] ?? 100;
+      const weightedPoints = Math.round(points * targetPercent / 100);
+      return { category, points, targetPercent, weightedPoints };
     });
-    const totalCategoryPoints = categoryTotals.reduce((sum, item) => sum + item.donePoints, 0) || 1;
 
     DOM.scoreBars.innerHTML = categoryTotals.map((item) => {
-      const percentage = Math.round((item.donePoints / totalCategoryPoints) * 100);
+      const percentage = item.targetPercent;
       return `
         <article class="score-bar">
           <div class="score-bar-head">
             <strong>${item.category}</strong>
-            <span class="score-meta">${item.donePoints} CM</span>
+            <span class="score-meta">${item.targetPercent}% · ${item.weightedPoints.toLocaleString("fr-FR")} CM</span>
           </div>
           <div class="score-bar-track" aria-hidden="true">
             <span class="score-bar-fill" style="width:${percentage}%"></span>
