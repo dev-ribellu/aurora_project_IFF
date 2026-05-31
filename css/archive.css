@@ -853,7 +853,6 @@ h1 {
   color: #fff;
   background: rgba(255, 255, 255, 0.16);
   box-shadow: 0 0 18px rgba(255, 255, 255, 0.34), 0 0 36px rgba(255, 255, 255, 0.2);
-  transform: scale(1.12);
 }
 
 .timeline-card.tag-crisis,
@@ -1602,7 +1601,7 @@ h1 {
 .tag-breath { background: rgba(136, 136, 136, 0.16); }
 .tag-nova { color: #2a2400; background: rgba(255, 221, 0, 0.94); }
 .tag-crisis { background: rgba(255, 0, 0, 0.2); }
-.tag-contact { color: #fff; background: rgba(255, 255, 255, 0.18); box-shadow: 0 0 18px rgba(255, 255, 255, 0.36), 0 0 32px rgba(255, 255, 255, 0.2); transform: scale(1.1); }
+.tag-contact { color: #fff; background: rgba(255, 255, 255, 0.18); box-shadow: 0 0 18px rgba(255, 255, 255, 0.36), 0 0 32px rgba(255, 255, 255, 0.2); }
 
 .glitch {
   position: relative;

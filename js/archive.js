@@ -316,19 +316,83 @@ const GALLERY_ITEMS = [
     meta: "15.03.2079 · Site d’atterrissage Omega"
   },
   {
-    src: "assets/Fichier 4.png",
-    title: "Archive visuelle 04",
-    meta: "Fichier brut CCA"
+    src: "assets/aurora_iff_rendu/aurora_iff/Infographie _ anatomie de l_Odyssey IV.jpg",
+    title: "Anatomie Odyssey IV",
+    meta: "Infographie mission"
   },
   {
-    src: "assets/Fichier 5.png",
-    title: "Archive visuelle 05",
-    meta: "Fichier brut CCA"
+    src: "assets/aurora_iff_rendu/aurora_iff/la structure REGARDE ET GARDE STV ROBIN.png",
+    title: "La structure",
+    meta: "Création visuelle"
   },
   {
-    src: "assets/Fichier 6.png",
-    title: "Archive visuelle 06",
-    meta: "Fichier brut CCA"
+    src: "assets/aurora_iff_rendu/aurora_iff/Message_Terre_Livrables/objet.png",
+    title: "Objet de contact",
+    meta: "Message Terre · livrables"
+  },
+  {
+    src: "assets/aurora_iff_rendu/aurora_iff/Premier contact_1.png",
+    title: "Premier contact 01",
+    meta: "Signal de retour"
+  },
+  {
+    src: "assets/aurora_iff_rendu/aurora_iff/Visuel « EVA en cours ».jpg",
+    title: "EVA en cours",
+    meta: "Suivi terrain"
+  },
+  {
+    src: "assets/aurora_iff_rendu/aurora_iff/Visuels anti-désinformation/affiche_NON.png",
+    title: "Anti-désinformation NON",
+    meta: "Kit de réponse"
+  },
+  {
+    src: "assets/aurora_iff_rendu/aurora_iff/Visuels anti-désinformation/affiche_reseaux_sociaux.webp",
+    title: "Anti-désinformation réseaux",
+    meta: "Kit de réponse"
+  },
+  {
+    src: "assets/aurora_iff_rendu/aurora_iff/Visuels anti-désinformation/égalité.jpg",
+    title: "Anti-désinformation égalité",
+    meta: "Kit de réponse"
+  }
+  ,
+  {
+    src: "assets/aurora_iff_rendu/aurora_iff/EVT_B_15/1_arrivéeEVT15-B.jpg",
+    title: "EVT15-B · Arrivée",
+    meta: "EVT15-B · Série visuelle"
+  },
+  {
+    src: "assets/aurora_iff_rendu/aurora_iff/EVT_B_15/2_messageEVT15-B.jpg",
+    title: "EVT15-B · Message",
+    meta: "EVT15-B · Série visuelle"
+  },
+  {
+    src: "assets/aurora_iff_rendu/aurora_iff/EVT_B_15/3_tempête_solaireEVT15-B.jpg",
+    title: "EVT15-B · Tempête",
+    meta: "EVT15-B · Série visuelle"
+  },
+  {
+    src: "assets/aurora_iff_rendu/aurora_iff/EVT_B_15/4_explorationEVT15-B.jpg",
+    title: "EVT15-B · Exploration",
+    meta: "EVT15-B · Série visuelle"
+  },
+  {
+    src: "assets/aurora_iff_rendu/aurora_iff/EVT_B_15/5_cellule_de_criseEVT15-B.jpg",
+    title: "EVT15-B · Cellule de crise",
+    meta: "EVT15-B · Série visuelle"
+  },
+  {
+    src: "assets/aurora_iff_rendu/aurora_iff/EVT_B_15/6_endEVT15-B.jpg",
+    title: "EVT15-B · Finale",
+    meta: "EVT15-B · Série visuelle"
+  }
+  ,
+  {
+    src: "https://i.ytimg.com/vi/E4nhrnWL_sk/hqdefault.jpg",
+    title: "Short DCP — Réaction instantanée",
+    meta: "YouTube Short · DCP",
+    type: "video",
+    video: "https://www.youtube.com/embed/E4nhrnWL_sk"
   }
 ];
 
@@ -525,11 +589,6 @@ function updateScores() {
 }
 
 function renderTimeline(filter = "all") {
-  activeTimelineFilter = filter;
-  if (!DOM.timelineGrid) {
-    return;
-  }
-
   const visibleEvents = TIMELINE_EVENTS.filter((event) => {
     if (filter === "all") {
       return true;
@@ -720,10 +779,35 @@ function openLightbox(index) {
     return;
   }
 
+  // remove existing video iframe if any
+  const panel = DOM.lightbox.querySelector('.lightbox-panel');
+  const existingIframe = panel.querySelector('iframe');
+  if (existingIframe) {
+    existingIframe.remove();
+  }
+
   DOM.lightbox.classList.add("is-open");
   DOM.lightbox.setAttribute("aria-hidden", "false");
-  DOM.lightboxImage.src = assetPath(item.src);
-  DOM.lightboxImage.alt = item.title;
+
+  if (item.type === 'video' && item.video) {
+    // hide image and inject iframe
+    DOM.lightboxImage.style.display = 'none';
+    const iframe = document.createElement('iframe');
+    iframe.src = item.video + '?autoplay=1&rel=0';
+    iframe.title = item.title;
+    iframe.loading = 'lazy';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+    // insert before figcaption
+    const figcaption = panel.querySelector('figcaption');
+    panel.insertBefore(iframe, figcaption);
+  } else {
+    // image
+    DOM.lightboxImage.style.display = '';
+    DOM.lightboxImage.src = assetPath(item.src);
+    DOM.lightboxImage.alt = item.title;
+  }
+
   DOM.lightboxTitle.textContent = item.title;
   DOM.lightboxMeta.textContent = item.meta;
 }
@@ -732,6 +816,17 @@ function closeLightbox() {
   if (!DOM.lightbox) {
     return;
   }
+  // remove any injected iframe to stop playback
+  const panel = DOM.lightbox.querySelector('.lightbox-panel');
+  const existingIframe = panel ? panel.querySelector('iframe') : null;
+  if (existingIframe) {
+    existingIframe.remove();
+  }
+  if (DOM.lightboxImage) {
+    DOM.lightboxImage.src = '';
+    DOM.lightboxImage.style.display = '';
+  }
+
   DOM.lightbox.classList.remove("is-open");
   DOM.lightbox.setAttribute("aria-hidden", "true");
 }
@@ -739,8 +834,32 @@ function closeLightbox() {
 function stepLightbox(direction) {
   lightboxIndex = (lightboxIndex + direction + GALLERY_ITEMS.length) % GALLERY_ITEMS.length;
   const item = GALLERY_ITEMS[lightboxIndex];
-  DOM.lightboxImage.src = assetPath(item.src);
-  DOM.lightboxImage.alt = item.title;
+  if (!item) {
+    return;
+  }
+  // reuse openLightbox logic to swap content
+  // remove existing iframe if any
+  const panel = DOM.lightbox.querySelector('.lightbox-panel');
+  const existingIframe = panel ? panel.querySelector('iframe') : null;
+  if (existingIframe) {
+    existingIframe.remove();
+  }
+
+  if (item.type === 'video' && item.video) {
+    DOM.lightboxImage.style.display = 'none';
+    const iframe = document.createElement('iframe');
+    iframe.src = item.video + '?autoplay=1&rel=0';
+    iframe.title = item.title;
+    iframe.loading = 'lazy';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+    const figcaption = panel.querySelector('figcaption');
+    panel.insertBefore(iframe, figcaption);
+  } else {
+    DOM.lightboxImage.style.display = '';
+    DOM.lightboxImage.src = assetPath(item.src);
+    DOM.lightboxImage.alt = item.title;
+  }
   DOM.lightboxTitle.textContent = item.title;
   DOM.lightboxMeta.textContent = item.meta;
 }
