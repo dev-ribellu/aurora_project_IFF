@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AURORA | Archive Officielle</title>
+  <meta name="description" content="Archive officielle de la mission AURORA — Odyssey IV — Kepler-452c." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Space+Grotesk:wght@400;500;700;900&family=Space+Mono:wght@400;700&family=Questrial&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/archive.css" />
+  <link rel="icon" href="assets/logo_jaune.png" />
+</head>
+<body>
+  <div class="loading-screen" id="loadingScreen" aria-hidden="true">
+    <div class="loading-panel">
+      <div class="loading-mark">AURORA</div>
+      <div class="loading-copy" id="loadingCopy">INITIALISATION ARCHIVE...</div>
+      <div class="loading-bar" aria-hidden="true">
+        <span id="loadingBarFill"></span>
+      </div>
+      <div class="loading-percent" id="loadingPercent">0%</div>
+    </div>
+  </div>
+
+  <canvas id="starCanvas" class="star-canvas" aria-hidden="true"></canvas>
+  <div class="cursor-layer" id="cursorLayer" aria-hidden="true">
+    <span class="cursor-dot"></span>
+    <span class="cursor-ring"></span>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <a class="brand" href="#hero" aria-label="Retour en haut de page">
+        <img class="brand-logo" src="assets/logo_jaune.png" alt="" aria-hidden="true" />
+        <span class="brand-copy">
+          <strong>AURORA ARCHIVE</strong>
+          <span>Centre de Contrôle Aurora</span>
+        </span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="primaryNav" aria-label="Ouvrir le menu">
+        <span></span>
+      </button>
+
+      <nav class="primary-nav" id="primaryNav">
+        <a href="#mission">Mission</a>
+        <a href="#timeline">Timeline</a>
+        <a href="#productions">Productions</a>
+        <a href="#transmissions">Transmissions</a>
+        <a href="#gallery">Galerie</a>
+        <a href="#capsule">Capsule</a>
+        <a href="#scores">Scores</a>
+      </nav>
+
+      <a class="back-button" href="index.html">← Retour au site</a>
+    </div>
+  </header>
+
+  <main class="archive-page">
+    <section class="hero section-shell scanlines" id="hero">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="container hero-grid">
+        <div class="hero-copy fade-in-up">
+          <div class="hero-label">ARCHIVE OFFICIELLE</div>
+          <h1 class="glitch" data-text="AURORA">AURORA</h1>
+          <p class="hero-subtitle">Mission Odyssey IV — Kepler-452c</p>
+          <div class="mission-status pulse-border">MISSION ACCOMPLIE</div>
+          <p class="hero-lead">
+            Dossier consolidé de la campagne AURORA. De la première image de la vallée d’Aurelia au signal de retour du contact, cette archive rassemble les productions, les transmissions et les traces de chaque décision de communication.
+          </p>
+
+          <div class="hero-stats" aria-label="Statistiques de mission">
+            <article class="stat-card">
+              <span class="stat-value counter" data-target="0" data-value="0" id="statTotalCm">0</span>
+              <span class="stat-label">Total CM scored</span>
+            </article>
+            <article class="stat-card">
+              <span class="stat-value counter" data-target="0" data-value="0" id="statDone">0</span>
+              <span class="stat-label">Missions completed</span>
+            </article>
+            <article class="stat-card">
+              <span class="stat-value counter" data-target="5" data-value="5">0</span>
+              <span class="stat-label">Pages produced</span>
+            </article>
+            <article class="stat-card">
+              <span class="stat-value counter" data-target="2" data-value="2">0</span>
+              <span class="stat-label">Days</span>
+            </article>
+          </div>
+        </div>
+
+        <aside class="hero-visual fade-in-up" aria-label="Visualisation de l'archive">
+          <div class="hero-orbit orbit-a"></div>
+          <div class="hero-orbit orbit-b"></div>
+          <div class="hero-orbit orbit-c"></div>
+          <div class="hero-panel">
+            <div class="hero-panel-top">
+              <span>CCA // AURORA ARCHIVE</span>
+              <span id="heroClock">31/05 09:00</span>
+            </div>
+            <div class="hero-panel-card">
+              <div class="panel-title">Mission profile</div>
+              <div class="panel-value">Odyssey IV</div>
+              <div class="panel-line">Distance: 1400 ly</div>
+              <div class="panel-line">Duration: 18 months</div>
+              <div class="panel-line">Crew: 6</div>
+              <div class="panel-line">Destination: Kepler-452c</div>
+            </div>
+            <div class="hero-panel-card compact">
+              <div class="panel-title">Mission status</div>
+              <div class="panel-value">COMPLETE</div>
+              <div class="panel-line">Archive synchronisée avec le parcours opérationnel.</div>
+            </div>
+          </div>
+          <div class="scroll-indicator" aria-hidden="true">
+            <span></span>
+            <span>SCROLL</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section section-shell fade-in-up" id="mission">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="section-kicker">MISSION OVERVIEW</div>
+            <h2>Contexte opérationnel</h2>
+          </div>
+          <p>Une mission pensée pour tenir la route sur 18 mois de transit, puis absorber une suite d’événements où la communication devient un outil de navigation autant qu’un outil de vérité.</p>
+        </div>
+
+        <div class="mission-grid">
+          <article class="overview-card">
+            <h3>Synopsis</h3>
+            <p>La cellule de communication du CCA accompagne Odyssey IV depuis le départ, structure les récits publics, protège les données sensibles et transforme les anomalies en messages exploitables.</p>
+            <p>Le dossier AURORA documente une mission qui finit en réussite technique, narrative et symbolique.</p>
+          </article>
+
+          <article class="overview-card crew-card">
+            <h3>Équipage</h3>
+            <div class="crew-list">
+              <div class="crew-item">
+                <strong>Commandante Ripley</strong>
+                <span>Commandement & arbitrage de crise</span>
+              </div>
+              <div class="crew-item">
+                <strong>Dr. Patel</strong>
+                <span>Analyse scientifique & protocole NOVA</span>
+              </div>
+              <div class="crew-item">
+                <strong>Lt. Laurent / Wong</strong>
+                <span>Reconnaissance EVA & terrain</span>
+              </div>
+              <div class="crew-item">
+                <strong>Davis / Dr. Silva</strong>
+                <span>Systèmes, soutien mission & capteurs</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="overview-card">
+            <h3>Paramètres mission</h3>
+            <dl class="mission-params">
+              <div><dt>Distance</dt><dd>1400 ly</dd></div>
+              <div><dt>Durée</dt><dd>18 mois</dd></div>
+              <div><dt>Équipage</dt><dd>6</dd></div>
+              <div><dt>Destination</dt><dd>Kepler-452c</dd></div>
+            </dl>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-shell fade-in-up" id="timeline">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="section-kicker">INTERACTIVE TIMELINE</div>
+            <h2>Transmissions & événements</h2>
+          </div>
+          <p>Chaque carte s’ouvre au clic. Les filtres isolent les phases clés: découverte, alertes, mystère et contact.</p>
+        </div>
+
+        <div class="filter-bar" id="timelineFilters" role="tablist" aria-label="Filtrer la timeline">
+          <button class="filter-button is-active" type="button" data-filter="all">Tous</button>
+          <button class="filter-button" type="button" data-filter="discovery">Découverte</button>
+          <button class="filter-button" type="button" data-filter="alert">Alerte</button>
+          <button class="filter-button" type="button" data-filter="mystery">Mystère</button>
+          <button class="filter-button" type="button" data-filter="contact">Contact</button>
+        </div>
+
+        <div class="timeline-grid" id="timelineGrid"></div>
+      </div>
+    </section>
+
+    <section class="section section-shell fade-in-up" id="productions">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="section-kicker">PRODUCTIONS</div>
+            <h2>Pages livrées</h2>
+          </div>
+          <p>Les cinq pages existantes du dispositif AURORA réunies en un seul hub: accès, description, portée et liens directs.</p>
+        </div>
+
+        <div class="production-grid" id="productionsGrid"></div>
+      </div>
+    </section>
+
+    <section class="section section-shell fade-in-up" id="transmissions">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="section-kicker">TRANSMISSIONS FEED</div>
+            <h2>Flux terminal</h2>
+          </div>
+          <p>Journal condensé des transmissions de l’équipage, classées par tonalité narrative et état de crise.</p>
+        </div>
+
+        <div class="filter-bar" id="feedFilters" role="tablist" aria-label="Filtrer les transmissions">
+          <button class="filter-button is-active" type="button" data-filter="all">Toutes</button>
+          <button class="filter-button" type="button" data-filter="crew">Équipage</button>
+          <button class="filter-button" type="button" data-filter="alerts">Alertes</button>
+          <button class="filter-button" type="button" data-filter="mystery">Mystère</button>
+        </div>
+
+        <div class="feed-list" id="feedList"></div>
+      </div>
+    </section>
+
+    <section class="section section-shell fade-in-up" id="gallery">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="section-kicker">GALLERY</div>
+            <h2>Images d’archive</h2>
+          </div>
+          <p>Chargées depuis le dossier assets, avec chargement paresseux et visionneuse plein écran sans bibliothèque externe.</p>
+        </div>
+
+        <div class="gallery-grid" id="galleryGrid"></div>
+      </div>
+    </section>
+
+    <section class="section section-shell section-capsule fade-in-up" id="capsule">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="section-kicker">CAPSULE AUDIOVISUELLE</div>
+            <h2>Moments vidéo</h2>
+          </div>
+          <p>Trois capsules réunissant le message humain, la tempête solaire et le retour du premier contact.</p>
+        </div>
+
+        <div class="video-grid">
+          <article class="video-card">
+            <div class="video-copy">
+              <h3>Séquence Émotion — Dr. Silva</h3>
+              <p>EVT03-C · un passage central de l’onde émotionnelle publique.</p>
+            </div>
+            <iframe
+              title="Séquence Émotion — Dr. Silva"
+              src="https://www.youtube.com/embed/9kBM25JblAw"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </article>
+
+          <article class="video-card">
+            <div class="video-copy">
+              <h3>Transmission Dégradée — Tempête M4</h3>
+              <p>EVT04-D · version altérée du flux pendant le mode COM-DEGRAD.</p>
+            </div>
+            <iframe
+              title="Transmission Dégradée — Tempête M4"
+              src="https://www.youtube.com/embed/6Uiohae__pc"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </article>
+
+          <article class="video-card placeholder">
+            <div class="video-copy">
+              <h3>Le Message de la Terre</h3>
+              <p>CONTACT-A · lien à ajouter pour la capsule finale.</p>
+            </div>
+            <iframe
+              title="Le Message de la Terre"
+              srcdoc="<html><head><style>body{margin:0;display:grid;place-items:center;background:linear-gradient(180deg,#050510,#111126);color:#f0f0f0;font-family:Space Mono,monospace;text-transform:uppercase;letter-spacing:.18em}div{border:1px solid rgba(0,229,255,.28);padding:24px 20px;border-radius:18px;background:rgba(255,255,255,.04);box-shadow:0 0 30px rgba(0,229,255,.12)}</style></head><body><div>Lien à ajouter</div></body></html>"
+              loading="lazy"></iframe>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-shell fade-in-up" id="scores">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <div class="section-kicker">SCORES</div>
+            <h2>Cellule de communication du CCA</h2>
+          </div>
+          <p>Nano Banana — synthèse globale des livrables, des CM accumulés et du taux d’achèvement des missions.</p>
+        </div>
+
+        <div class="score-topline">
+          <article class="score-card score-card-large">
+            <span class="score-label">Total CM</span>
+            <strong class="score-value counter" id="scoreTotalCm" data-value="0" data-target="0">0</strong>
+          </article>
+          <article class="score-card">
+            <span class="score-label">Missions done</span>
+            <strong class="score-value counter" id="scoreDone" data-value="0" data-target="0">0</strong>
+          </article>
+          <article class="score-card">
+            <span class="score-label">Completion rate</span>
+            <strong class="score-value" id="scoreRate">0%</strong>
+          </article>
+        </div>
+
+        <div class="score-bars" id="scoreBars"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <strong>AURORA ARCHIVE</strong>
+        <p>Centre de Contrôle Aurora · Odyssey IV</p>
+      </div>
+      <div class="footer-links">
+        <a href="#mission">Mission</a>
+        <a href="#timeline">Timeline</a>
+        <a href="#productions">Productions</a>
+        <a href="#gallery">Galerie</a>
+        <a href="#capsule">Capsule</a>
+        <a href="#scores">Scores</a>
+      </div>
+      <p class="footer-note">Mission AURORA — Odyssey IV — 29-31 Mai 2025</p>
+    </div>
+  </footer>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Visionneuse de galerie">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Fermer">×</button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" type="button" aria-label="Image précédente">‹</button>
+    <figure class="lightbox-panel">
+      <img id="lightboxImage" alt="" />
+      <figcaption>
+        <strong id="lightboxTitle"></strong>
+        <span id="lightboxMeta"></span>
+      </figcaption>
+    </figure>
+    <button class="lightbox-nav lightbox-next" id="lightboxNext" type="button" aria-label="Image suivante">›</button>
+  </div>
+
+  <script src="js/archive.js"></script>
+</body>
+</html>

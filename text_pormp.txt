@@ -1,0 +1,549 @@
+You are an expert front-end developer. I have an existing website 
+with this file structure:
+
+ROOT/
+├── assets/
+├── Code.gs
+├── crisis-terminal.html
+├── eva-tracking.html
+├── index.html          ← existing main site, READ IT to extract data
+├── nova-discovery.css
+├── nova-discovery.html
+├── nova-discovery.js
+├── script.js
+├── signal.css
+├── signal.html
+├── signal.js
+├── style.css
+└── truc.txt
+
+CREATE ONLY: archive.html + css/archive.css + js/archive.js
+DO NOT MODIFY any existing file.
+
+═══════════════════════════════════════
+STEP 1 — READ EXISTING FILES FIRST
+═══════════════════════════════════════
+
+Before writing any code, read and extract from index.html:
+- Color variables (CSS custom properties)
+- Font families used
+- Any existing transmission data
+- Navigation structure
+- Any JS data objects or arrays
+
+Also read style.css to extract the full visual identity.
+Your archive.html MUST be visually consistent with index.html.
+
+═══════════════════════════════════════
+MISSION DATA — HARDCODE THIS IN archive.js
+═══════════════════════════════════════
+
+const MISSIONS_SOCLE = [
+  { id: "SOC-01", type: "socle", points: 50, 
+    title: "Identité visuelle", category: "Visuel", 
+    status: "done" },
+  { id: "SOC-02", type: "socle", points: 50, 
+    title: "Charte éditoriale", category: "Rédaction", 
+    status: "done" },
+  { id: "SOC-03", type: "socle", points: 75, 
+    title: "Site vitrine du CCA", category: "Web", 
+    status: "done" },
+  { id: "SOC-04", type: "socle", points: 50, 
+    title: "Communiqué de lancement", category: "Rédaction", 
+    status: "done" },
+  { id: "SOC-05", type: "socle", points: 75, 
+    title: "Kit réseaux sociaux", category: "Visuel", 
+    status: "done" },
+  { id: "SOC-06", type: "socle", points: 100, 
+    title: "Stratégie de communication", category: "Rédaction", 
+    status: "done" },
+  { id: "SOC-07", type: "socle", points: 75, 
+    title: "Présentation de l'équipage", category: "Visuel", 
+    status: "done" }
+];
+
+const TIMELINE_EVENTS = [
+  {
+    id: "EVT-01",
+    date: "29/05 19:31",
+    tag: "Découverte",
+    tagColor: "discovery",
+    title: "Premier contact visuel",
+    transmission: `CCA, ici Laurent. On vient de terminer le premier 
+    survol basse altitude de la zone Alpha. Les images arrivent. 
+    C'est... c'est vraiment autre chose de le voir de près. 
+    La vallée d'Aurelia est immense. On distingue ce qui ressemble 
+    à des formations rocheuses stratifiées. Patel est comme un gosse 
+    devant un sapin de Noël.`,
+    missions: [
+      { id: "EVT01-A", points: 75, title: "Communiqué Premières images", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT01-B", points: 75, title: "Visuel réseaux sociaux", 
+        category: "Visuel", status: "done" },
+      { id: "EVT01-C", points: 75, title: "Galerie photo sur le site", 
+        category: "Web", status: "done", link: "index.html#gallery" }
+    ]
+  },
+  {
+    id: "EVT-02",
+    date: "29/05 22:00",
+    tag: "Information",
+    tagColor: "info",
+    title: "Incident technique mineur",
+    transmission: `Défaillance capteur thermique module 3. 
+    Diagnostic en cours. Impact mission : négligeable. 
+    Réparation estimée : 4h. Rien de grave, c'est un capteur 
+    redondant. Davis et moi on s'en occupe.`,
+    missions: [
+      { id: "EVT02-A", points: 50, title: "Note de briefing interne", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT02-B", points: 75, title: "Journal de bord technique", 
+        category: "Web", status: "done", link: "index.html" },
+      { id: "EVT02-C", points: 75, title: "Infographie Odyssey IV", 
+        category: "Visuel", status: "done" }
+    ]
+  },
+  {
+    id: "EVT-03",
+    date: "30/05 00:30",
+    tag: "Émotion",
+    tagColor: "emotion",
+    title: "Message personnel viral",
+    transmission: `Maman, Papa... Je sais que vous recevrez ça dans 
+    20 minutes. Aujourd'hui ça fait exactement 2 ans que je suis 
+    partie de la maison. La Terre me manque. Vous me manquez. 
+    Mais quand je regarde par le hublot et que je vois cette planète 
+    qu'aucun humain n'a jamais vue de si près... je sais pourquoi 
+    je suis là. Je vous aime.`,
+    note: "Message viral. Forte émotion publique. Opportunité humaine.",
+    missions: [
+      { id: "EVT03-A", points: 75, title: "Message officiel CCA", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT03-B", points: 75, title: "Visuel citation spatiale", 
+        category: "Visuel", status: "done" },
+      { id: "EVT03-C", points: 100, title: "Séquence émotion capsule", 
+        category: "Vidéo", status: "done" }
+    ]
+  },
+  {
+    id: "EVT-04",
+    date: "30/05 03:00",
+    tag: "Alerte",
+    tagColor: "alert",
+    glitch: true,
+    title: "Tempête solaire",
+    transmission: `Tempête solaire de classe M4 détectée. 
+    Impact communications dans 45 minutes. Durée estimée : 6-8h. 
+    Débit réduit à 10%. Protocole COM-DEGRAD activé. 
+    On passe en mode économie de bande passante.`,
+    missions: [
+      { id: "EVT04-A", points: 75, title: "Communiqué alerte publique", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT04-B", points: 75, title: "Visuel alerte tempête", 
+        category: "Visuel", status: "done" },
+      { id: "EVT04-C", points: 150, title: "Mode dégradé glitch", 
+        category: "Web", status: "done", link: "crisis-terminal.html" },
+      { id: "EVT04-D", points: 125, title: "Transmission dégradée", 
+        category: "Vidéo", status: "done" }
+    ]
+  },
+  {
+    id: "EVT-05",
+    date: "30/05 06:00",
+    tag: "Respiration",
+    tagColor: "breath",
+    title: "Point d'étape - fin de nuit",
+    transmission: `Tempête solaire en décroissance, signal se stabilise. 
+    L'équipage va bien. Le capteur est réparé. Première EVA de 
+    reconnaissance sur le site Delta prévue cet après-midi. 
+    Laurent et Wong sont impatients. Bonne matinée, la Terre.`,
+    missions: []
+  },
+  {
+    id: "EVT-06",
+    date: "30/05 08:47",
+    tag: "Mystère",
+    tagColor: "mystery",
+    title: "Signal anormal - log automatique",
+    transmission: `Détection signal électromagnétique anormal. 
+    Source : Vallée d'Aurelia, secteur 7. Durée : 3 min 42s. 
+    Fréquence : non répertoriée dans les bases de données connues. 
+    Équipage informé.`,
+    missions: [
+      { id: "EVT06-A", points: 100, title: "Rapport anomalie classifié", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT06-B", points: 100, title: "Cartographie du signal", 
+        category: "Visuel", status: "done" },
+      { id: "EVT06-C", points: 100, title: "Système alerte site web", 
+        category: "Web", status: "done", link: "signal.html" }
+    ]
+  },
+  {
+    id: "EVT-07",
+    date: "30/05 10:01",
+    tag: "Mystère",
+    tagColor: "mystery",
+    title: "Briefing confidentiel - le signal",
+    transmission: `Ce matin, nos systèmes ont capté un signal anormal 
+    en provenance de la vallée d'Aurelia, secteur 7. Fréquence inconnue, 
+    durée 3 min 42s. Le Dr. Patel demande une EVA d'investigation 
+    d'urgence. La fréquence est trop régulière pour être du bruit. 
+    Il FAUT qu'on aille voir.`,
+    missions: [
+      { id: "EVT07-A", points: 75, title: "Note synthèse confidentielle", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT07-B", points: 75, title: "Éléments langage médias", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT07-C", points: 75, title: "Visualisation données signal", 
+        category: "Visuel", status: "done" }
+    ]
+  },
+  {
+    id: "EVT-08",
+    date: "30/05 11:33",
+    tag: "Information",
+    tagColor: "info",
+    title: "EVA en direct - secteur 7",
+    transmission: `CCA, Laurent et Wong en approche du secteur 7. 
+    Visibilité correcte. Sol stable. 
+    C'est une formation cristalline. Jamais vu ça. 
+    Elle est translucide, haute d'environ 3 mètres, 
+    et elle pulse. Faiblement, mais de manière régulière.`,
+    missions: [
+      { id: "EVT08-A", points: 75, title: "Fil actualité en direct", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT08-B", points: 75, title: "Visuel EVA en cours", 
+        category: "Visuel", status: "done" },
+      { id: "EVT08-C", points: 100, title: "Page suivi EVA direct", 
+        category: "Web", status: "done", link: "eva-tracking.html" }
+    ]
+  },
+  {
+    id: "EVT-09",
+    date: "30/05 16:01",
+    tag: "Information",
+    tagColor: "nova",
+    title: "Découverte confirmée - Protocole NOVA",
+    classified: true,
+    transmission: `Structure cristalline bioluminescente. 3,2 mètres. 
+    Cycle lumineux de 47 secondes. Signal ce matin venait de là. 
+    Ce n'est pas un artefact. Ce n'est pas un bug. 
+    PROTOCOLE NOVA activé. 
+    VOCABULAIRE INTERDIT : vie, extraterrestre, alien, organisme. 
+    AUTORISÉ : phénomène naturel inexpliqué, structure d'origine 
+    inconnue, anomalie géologique active.`,
+    missions: [
+      { id: "EVT09-A", points: 125, title: "Communiqué découverte", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT09-B", points: 100, title: "Vulgarisation scientifique", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT09-C", points: 125, title: "Représentation artistique", 
+        category: "Visuel", status: "done" },
+      { id: "EVT09-D", points: 150, title: "Section découverte site", 
+        category: "Web", status: "done", link: "nova-discovery.html" },
+      { id: "EVT09-E", points: 150, title: "Capsule vidéo découverte", 
+        category: "Vidéo", status: "voir" }
+    ]
+  },
+  {
+    id: "EVT-10",
+    date: "30/05 19:00",
+    tag: "Information",
+    tagColor: "alert",
+    title: "Manipulation et désinformation",
+    transmission: `ALERTE : Cellule identifiée comme ayant manipulé 
+    les systèmes de scoring. 3600 CM frauduleux injectés. 
+    Hashtag #AuroraAlien en tendance mondiale. 
+    Ripley : Ce n'est pas des petits hommes verts. 
+    Restez factuel, restez intègre. On compte sur vous.`,
+    missions: [
+      { id: "EVT10-A", points: 100, title: "Analyse manipulation", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT10-B", points: 100, title: "Kit réponse désinformation", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT10-C", points: 125, title: "Visuels anti-désinformation", 
+        category: "Visuel", status: "done" }
+    ]
+  },
+  {
+    id: "EVT-11",
+    date: "30/05 22:00",
+    tag: "Alerte",
+    tagColor: "crisis",
+    glitch: true,
+    title: "Crise médiatique totale",
+    transmission: `Situation critique. #AuroraAlien repris par 
+    4 médias TV nationaux. Mère du Dr. Silva harcelée à son domicile. 
+    Deepfake vidéo en circulation. Appels au standard : +2000%. 
+    Réponse coordonnée immédiate tous canaux nécessaire.`,
+    missions: [
+      { id: "EVT11-A", points: 125, title: "Démenti officiel CCA", 
+        category: "Rédaction", status: "done" },
+      { id: "EVT11-B", points: 75, title: "Message soutien familles", 
+        category: "Rédaction", status: "voir" },
+      { id: "EVT11-C", points: 150, title: "Preuve de vie équipage", 
+        category: "Vidéo", status: "voir" },
+      { id: "EVT11-D", points: 150, title: "Centre de crise en ligne", 
+        category: "Web", status: "done", link: "crisis-terminal.html" }
+    ]
+  },
+  {
+    id: "EVT-12",
+    date: "31/05 01:00",
+    tag: "Respiration",
+    tagColor: "breath",
+    title: "Accalmie - la crise retombe",
+    transmission: `Les familles ont été rassurées. Ma mère m'a envoyé 
+    un message, elle va bien. Merci pour votre réactivité. 
+    Ça rappelle qu'on est loin... et qu'on compte sur vous là-bas. 
+    Restez vigilants.`,
+    missions: []
+  },
+  {
+    id: "EVT-13",
+    date: "31/05 08:49",
+    tag: "Information",
+    tagColor: "info",
+    title: "Tension interne - log confidentiel",
+    classified: true,
+    transmission: `Altercation verbale entre Dr. Patel et Lt. Laurent. 
+    Sujet : priorité EVA secteur 7 vs protocoles sécurité. 
+    Intervention Cdt. Ripley. Situation stabilisée. 
+    Fatigue accumulée, stress post-crise.`,
+    missions: []
+  },
+  {
+    id: "EVT-CONTACT",
+    date: "31/05 09:00",
+    tag: "PREMIER CONTACT",
+    tagColor: "contact",
+    glitch: false,
+    highlight: true,
+    title: "Le signal retour",
+    transmission: `LOG AUTOMATIQUE - ALERTE MAXIMALE. 
+    La structure cristalline a modifié son cycle : 47s → 4,7s. 
+    Champ électromagnétique décuplé. Le spectre contient une séquence 
+    structurée qui se répète. Le Dr. Patel est en larmes. 
+    Ripley : Quelque chose a répondu. 
+    C'est à vous de décider ce que l'humanité dit en retour. 
+    Répondez.`,
+    missions: [
+      { id: "CONTACT-A", points: 150, title: "Le message de la Terre", 
+        category: "Vidéo", status: "done" },
+      { id: "CONTACT-B", points: 100, title: "Premier contact - visuel iconique", 
+        category: "Visuel", status: "en-cours" }
+    ]
+  }
+];
+
+const EXISTING_PAGES = [
+  { 
+    id: "index", 
+    title: "Site Principal AURORA", 
+    description: "Page d'accueil du CCA — hub de toutes les missions",
+    link: "index.html", 
+    icon: "🌌",
+    missions: ["SOC-03"]
+  },
+  { 
+    id: "nova", 
+    title: "Nova Discovery", 
+    description: "Section dédiée à la découverte de la structure cristalline",
+    link: "nova-discovery.html", 
+    icon: "✨",
+    missions: ["EVT09-D"]
+  },
+  { 
+    id: "signal", 
+    title: "Signal Mystérieux", 
+    description: "Système d'alerte — signal anormal secteur 7",
+    link: "signal.html", 
+    icon: "📡",
+    missions: ["EVT06-C"]
+  },
+  { 
+    id: "crisis", 
+    title: "Terminal de Crise", 
+    description: "Interface glitch — mode dégradé tempête solaire & crise médiatique",
+    link: "crisis-terminal.html", 
+    icon: "⚠️",
+    missions: ["EVT04-C", "EVT11-D"]
+  },
+  { 
+    id: "eva", 
+    title: "Suivi EVA", 
+    description: "Page de suivi en direct de l'EVA secteur 7",
+    link: "eva-tracking.html", 
+    icon: "🧑‍🚀",
+    missions: ["EVT08-C"]
+  }
+];
+
+// SCORE CALCULATOR
+// Auto-compute total CM from all missions marked status:"done"
+function computeTotalCM() {
+  let total = 0;
+  [...MISSIONS_SOCLE, 
+   ...TIMELINE_EVENTS.flatMap(e => e.missions || [])]
+    .filter(m => m.status === "done")
+    .forEach(m => total += m.points);
+  return total;
+}
+
+═══════════════════════════════════════
+SECTIONS TO BUILD IN archive.html
+═══════════════════════════════════════
+
+1. LOADING SCREEN
+   - Logo reveal animation
+   - "INITIALISATION ARCHIVE..." typewriter
+   - Progress bar 0→100%
+   - Fade out after 2.5s
+
+2. NAV (fixed)
+   - Logo left
+   - Links: Mission / Timeline / Productions / 
+     Transmissions / Galerie / Capsule / Scores
+   - "← Retour au site" button right → index.html
+   - Mobile hamburger
+
+3. HERO (fullscreen)
+   - Background: parallax space image or CSS starfield
+   - "ARCHIVE OFFICIELLE" small label top
+   - "AURORA" massive title with glitch effect
+   - "Mission Odyssey IV — Kepler-452c" subtitle
+   - Mission status: "MISSION ACCOMPLIE"
+   - Animated stats: 
+     Total CM scored (computed from data)
+     Missions completed (count status=done)
+     Pages produced (5)
+     Days (2)
+   - Scroll indicator
+
+4. MISSION OVERVIEW
+   - Brief AURORA narrative
+   - 3 crew cards (Commandante Ripley / Dr. Patel / Lt. Laurent 
+     / Wong / Davis / Dr. Silva)
+   - Mission parameters: Distance 1400 ly / Duration 18 months 
+     / Crew 6 / Destination Kepler-452c
+
+5. INTERACTIVE TIMELINE
+   - Render from TIMELINE_EVENTS array
+   - Each event = card with:
+     date / tag (color coded) / title / 
+     collapsed transmission text (expand on click) /
+     mission badges (points + status)
+   - Tag colors:
+     discovery → #00ff88 (green)
+     info → #4488ff (blue)  
+     alert → #ff4400 (orange)
+     mystery → #aa44ff (purple)
+     emotion → #ff88aa (pink)
+     breath → #888888 (gray)
+     nova → #ffdd00 (gold)
+     crisis → #ff0000 (red) + glitch effect
+     contact → #ffffff (white) + glow + scale 1.2
+   - EVT-CONTACT must be visually MASSIVE
+     Full width card, white glow, pulsing border
+   - Filter buttons: Tous / Découverte / Alerte / 
+     Mystère / Contact
+   - missions with status "done" → green badge ✓
+   - missions with status "voir" → gray badge ◎
+   - missions with status "en-cours" → yellow badge ◉
+
+6. PRODUCTIONS (cards grid)
+   - Render from EXISTING_PAGES array
+   - Each card: icon / title / description / 
+     mission tags / "Accéder →" button
+   - Hover: lift + glow effect
+   - All links open in same tab
+
+7. TRANSMISSIONS FEED
+   - All transmissions from TIMELINE_EVENTS
+   - Styled as a terminal/feed
+   - Each entry: timestamp / tag / crew member text
+   - Glitch CSS on alert/crisis events
+   - Filter: Toutes / Équipage / Alertes / Mystère
+
+8. GALLERY SECTION
+   - Load from assets/ folder
+   - Masonry CSS grid
+   - Lightbox on click (pure JS, no library)
+   - Lazy loading
+
+9. VIDEO CAPSULE
+   - Section title: "Capsule Audiovisuelle"
+   - 3 video slots with iframes
+   - https://youtu.be/9kBM25JblAw
+   - https://youtu.be/6Uiohae__pc
+   - Lien à ajouter 
+   - Cinematic dark presentation
+   - Video titles from missions:
+     1. "Séquence Émotion — Dr. Silva" (EVT03-C)
+     2. "Transmission Dégradée — Tempête M4" (EVT04-D)  
+     3. "Le Message de la Terre" (CONTACT-A)
+
+10. SCORES SECTION
+    - Total CM display (computed live from data)
+    - Breakdown by category: Web / Visuel / Rédaction / Vidéo
+    - Progress bars per category
+    - Mission completion rate: X/Y missions done
+    - "Nano Banana — Cellule de communication du CCA"
+
+11. FOOTER
+    - Logo + team name
+    - All page links
+    - "Mission AURORA — Odyssey IV — 29-31 Mai 2025"
+
+═══════════════════════════════════════
+VISUAL EFFECTS REQUIRED
+═══════════════════════════════════════
+
+CSS CLASSES TO BUILD:
+.glitch { 
+  animation: glitch 0.3s infinite;
+  /* RGB split + shake */ 
+}
+.scanlines {
+  background: repeating-linear-gradient(
+    transparent, transparent 2px, 
+    rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px
+  );
+}
+.pulse-border {
+  animation: pulse 2s ease-in-out infinite;
+  /* For EVT-CONTACT card */
+}
+.typewriter { /* JS driven */ }
+.fade-in-up { /* Intersection Observer triggered */ }
+.counter { /* JS number animation */ }
+
+STAR PARTICLE BACKGROUND:
+- Canvas element fixed behind everything
+- 200 stars, random size 1-3px
+- Slow drift animation
+- Some stars twinkle
+
+CUSTOM CURSOR:
+- Default: assets/cursor.png
+- On links/buttons: assets/cursor-pointer.png
+- Fallback: crosshair
+
+═══════════════════════════════════════
+GENERATION ORDER
+═══════════════════════════════════════
+
+1. Generate archive.html (complete, all sections, 
+   all data hardcoded, ready to open in browser)
+
+2. Generate css/archive.css (full styles, variables, 
+   animations, responsive, glitch, scanlines)
+
+3. Generate js/archive.js (timeline render, 
+   lightbox, cursor, particles canvas, 
+   scroll animations, score calculator, 
+   transmission feed filter, loading screen)
+
+Make every section feel like a real space agency 
+mission archive. This is a jury showcase.
+Professional. Immersive. Unforgettable.

@@ -1,0 +1,85 @@
+1 — O Generale (version modifiée)
+Une version personnelle de l'hymne corse O Generale a été retravaillée.
+
+Première moitié : version a cappella, voix seule, épurée
+Deuxième moitié : version instrumentale, tempo volontairement long et étiré
+
+Le choix du corse n'est pas anodin — c'est la langue du CCA mais aussi une langue à la musicalité particulière, presque universelle dans sa sonorité.
+Les voix graves ancrent le son dans quelque chose d'humain et de terrestre. Ces fréquences basses ne s'entendent pas seulement — elles se ressentent dans le corps, dans la poitrine, dans les os. C'est une façon de communiquer qui dépasse l'oreille.
+À l'inverse, les fréquences aiguës créent une tension vers le haut, vers l'espace. Elles sont pensées pour être captées par des formes de vie dont les systèmes sensoriels pourraient être différents des nôtres — certaines espèces perçoivent le monde avant tout par les hautes fréquences.
+L'association des deux crée un message qui parle à la fois au corps et à l'espace.
+
+2 — Composition cosmique (alliage sonore)
+Le second son est un alliage de trois éléments fusionnés ensemble.
+Plasma solaire — NASA
+Enregistrement réel de plasma solaire capté par la NASA
+Source : soundcloud.com/nasa/plasmawaves-chorus
+Battements de coeur humain
+Son brut, organique, vivant
+Source : lasonotheque.org/battements-de-coeur-4-s1929
+Composition au piano — Suite de Fibonacci
+Une mélodie construite sur la suite mathématique de Fibonacci, langage universel présent dans la nature, les galaxies, le vivant
+Source : inanov.fr/site/musique
+
+Pourquoi cet alliage ?
+Ces trois sons forment un message codé :
+
+Le plasma vient de l'espace — on parle leur langue
+Le coeur est universel — toute vie a un rythme
+Fibonacci est mathématique — compréhensible au-delà des langues
+
+La superposition de ces couches crée elle aussi un spectre de fréquences large — des graves profonds qui se ressentent physiquement jusqu'aux aigus qui traversent l'air. Le son devient ainsi une expérience corporelle avant d'être une expérience auditive.
+
+Stockage ADN
+Ce message sonore est pensé pour être transmis sous différentes formes.
+Notamment encodé en séquence ADN — car l'ADN est un système de stockage d'information, et toute forme de vie partage cette structure fondamentale.
+C'est le vrai message universel : pas une langue, pas une image — une molécule.
+
+
+
+
+
+
+
+Le matériau — le métal brossé
+L'objet est une plaque de métal brossé, gris anthracite. Ce n'est pas un choix anodin. Le métal renvoie directement aux plaques Pioneer lancées en 1972-1973 par la NASA — des plaques d'aluminium gravées attachées aux sondes Pioneer 10 et 11, conçues pour transmettre un message à une éventuelle civilisation extraterrestre. C'est la référence historique directe. On grave dans le métal ce qu'on veut que le temps ne détruise pas.
+
+La forme carrée — la structure humaine
+Contrairement au cercle qui appartient à la nature et à l'univers, le carré est une invention humaine. La nature ne fait pas de carrés. En partant d'une base carrée, l'objet dit d'emblée : ceci vient d'une intelligence qui construit, qui structure, qui découpe l'espace.
+
+Les deux lignes ECG — deux vies
+Gravées en creux dans le métal, deux lignes de rythme cardiaque traversent la plaque horizontalement. Elles ne sont pas identiques — leurs pics, leurs fréquences, leurs amplitudes diffèrent. C'est délibéré. L'ECG est le signal le plus universel de la vie animale telle qu'on la connaît : tant que la ligne bouge, quelque chose vit. Envoyer deux ECG différents c'est dire nous existons — et nous imaginons que vous aussi.
+
+La gravure en creux — le message dans la matière
+Les lignes ne sont pas dessinées, elles sont creusées. La matière est retirée pour laisser apparaître le message. Symboliquement c'est fort : on ne pose pas quelque chose sur la surface, on inscrit dans la profondeur. Comme une écriture, comme une cicatrice, comme une mémoire.
+
+Le cercle au centre — le point de contact
+Au croisement des deux lignes, un cercle. Les deux rythmes se rejoignent en ce point et se déforment légèrement pour l'entourer — comme si la rencontre perturbait les deux signaux. Le cercle est vide, ouvert. Il ne représente pas la Terre ni Kepler-452c spécifiquement — il représente le lieu de la rencontre. Un espace neutre entre deux formes de vie.
+
+
+
+
+
+
+Signal — Explication du rendu
+
+Ce qui est visible
+Un fond noir total. Deux lignes blanches horizontales traversent l'écran. Un cercle au centre. Une croix qui suit le mouvement.
+Rien d'autre.
+
+La ligne du haut
+Elle reproduit la forme d'un électrocardiogramme — onde Q, pic R, onde S, onde T. Le signal défile en continu de gauche à droite, comme sur un moniteur médical. Le rythme est calé sur 70 battements par minute, fréquence cardiaque humaine au repos.
+Elle réagit à la vitesse du curseur. Plus le mouvement est rapide, plus l'amplitude augmente. Elle tremble. Elle s'agite.
+
+La ligne du bas
+Elle est presque plate. Toutes les 4,7 secondes, elle produit un pulse — montée brutale, plateau irrégulier, descente asymétrique, micro-rebond, retour au calme. Entre les pulses, de légères ondulations aléatoires. Elle n'attend pas l'interaction. Elle fait ce qu'elle fait.
+
+Le son
+Généré entièrement en temps réel via Web Audio API, aucun fichier importé.
+Un oscillateur tourne en continu. Sa fréquence monte à mesure que le curseur se rapproche du centre — de 80Hz au loin jusqu'à 600Hz à proximité immédiate. La transition est progressive, sans coupure.
+À chaque pic R de la ligne ECG, un bref bruit organique. Discret, presque imperceptible.
+
+Le contact
+Si le curseur reste immobile trois secondes au niveau du cercle central, les deux lignes convergent vers le centre de l'écran. Elles se rejoignent. Le mot Contact. apparaît.
+Un accord sonne — deux oscillateurs superposés, 528Hz et 264Hz, avec une enveloppe douce qui monte puis s'éteint.
+Puis le silence revient.
